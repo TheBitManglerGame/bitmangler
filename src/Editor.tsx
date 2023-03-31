@@ -3,33 +3,12 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRotateLeft } from '@fortawesome/free-solid-svg-icons';
 
+import { BinaryPanel } from "./BinaryPanel";
+
 const EditorWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-`;
-
-const BinaryPanel = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width 70%;
-`;
-
-const BinaryDigit = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 5px;
-  font-size: 3vw;
-  font-weight: bold;
-  background-color: #f2f2f2;
-  border-radius: 5px;
-
-  &:hover {
-    cursor: pointer;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  }
 `;
 
 const EditorContent = styled.div`
@@ -94,16 +73,7 @@ const Editor: React.FC = () => {
         <ControlPanel><FontAwesomeIcon icon={faRotateLeft} /></ControlPanel>
       </SidebarLeft>
       <EditorContent>
-        <BinaryPanel>
-          <BinaryDigit>0</BinaryDigit>
-          <BinaryDigit>1</BinaryDigit>
-          <BinaryDigit>0</BinaryDigit>
-          <BinaryDigit>1</BinaryDigit>
-          <BinaryDigit>0</BinaryDigit>
-          <BinaryDigit>1</BinaryDigit>
-          <BinaryDigit>0</BinaryDigit>
-          <BinaryDigit>1</BinaryDigit>
-        </BinaryPanel>
+        <BinaryPanel bits={[1,1,1,1,1,1,1]} />
         <SubmitButton>Submit transition</SubmitButton>
       </EditorContent>
       <RightSidebar>
