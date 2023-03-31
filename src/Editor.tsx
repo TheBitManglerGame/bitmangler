@@ -2,8 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 import { BinaryPanel } from "./BinaryPanel";
+import { BinOperand } from "./BinOperand";
+import { Control } from "./Control";
 
 const EditorWrapper = styled.div`
   display: flex;
@@ -53,7 +57,7 @@ const SidebarLeft = styled.div`
   height: 100vh; /* Set height to 100% of viewport height */
 `;
 
-const ControlPanel = styled.div`
+const SimpleControl = styled.div`
   height: calc(100% / 6);
   background-color: #f2f2f2;
   border: 1px solid #ddd;
@@ -67,25 +71,29 @@ const ControlPanel = styled.div`
 `;
 
 const Editor: React.FC = () => {
+    const bits = [0,0,0,0,0,0,0,0];
   return (
-    <EditorWrapper>
-      <SidebarLeft>
-        <ControlPanel>HELP</ControlPanel>
-        <ControlPanel><FontAwesomeIcon icon={faRotateLeft} /></ControlPanel>
-      </SidebarLeft>
-      <EditorContent>
-        <BinaryPanel bits={[1,1,1,1,1,1,1]} />
-        <SubmitButton>Submit transition</SubmitButton>
-      </EditorContent>
-      <RightSidebar>
-        <ControlPanel>1/0</ControlPanel>
-        <ControlPanel>&gt;&gt;/&lt;&lt;</ControlPanel>
-        <ControlPanel>AND (&)</ControlPanel>
-        <ControlPanel>OR (|)</ControlPanel>
-        <ControlPanel>XOR (^)</ControlPanel>
-        <ControlPanel>NOT (~)</ControlPanel>
-      </RightSidebar>
-    </EditorWrapper>
+    <DndProvider backend={HTML5Backend}>
+        <EditorWrapper>
+        <SidebarLeft>
+            <SimpleControl>HELP</SimpleControl>
+            <SimpleControl><FontAwesomeIcon icon={faRotateLeft} /></SimpleControl>
+        </SidebarLeft>
+        <EditorContent>
+            <BinaryPanel bits={bits} />
+            <BinOperand />
+            <SubmitButton>Submit transition</SubmitButton>
+        </EditorContent>
+        <RightSidebar>
+            <Control name={"1/0"}/>
+            <Control name={">>/<<"}/>
+            <Control name={"AND (&)"}/>
+            <Control name={"OR (|)"}/>
+            <Control name={"XOR (^)"}/>
+            <Control name={"NOT (~)"}/>
+        </RightSidebar>
+        </EditorWrapper>
+    </DndProvider>
   );
 };
 
