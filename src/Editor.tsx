@@ -26,13 +26,14 @@ const SubmitButton = styled.button`
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  margin: 20px 0;
+  margin: 2vw 0;
   padding: 10px 20px;
   background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 2vw;
 `;
 
 const RightSidebar = styled.div`

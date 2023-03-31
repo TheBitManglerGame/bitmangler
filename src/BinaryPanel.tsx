@@ -8,7 +8,6 @@ const BinaryDigit = styled.div`
   margin: 0 5px;
   font-size: 3vw;
   font-weight: bold;
-  background-color: #f2f2f2;
   border-radius: 5px;
 
   &:hover {
