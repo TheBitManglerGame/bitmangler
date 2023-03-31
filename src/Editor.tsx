@@ -9,12 +9,36 @@ const EditorWrapper = styled.div`
   align-items: flex-start;
 `;
 
+const BinaryPanel = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width 70%;
+`;
+
+const BinaryDigit = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 5px;
+  font-size: 3vw;
+  font-weight: bold;
+  background-color: #f2f2f2;
+  border-radius: 5px;
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  }
+`;
+
 const EditorContent = styled.div`
   width: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
+  margin-top: 2.5vw;
   margin-bottom: 20px;
 `;
 
@@ -62,7 +86,6 @@ const ControlPanel = styled.div`
   }
 `;
 
-
 const Editor: React.FC = () => {
   return (
     <EditorWrapper>
@@ -71,8 +94,16 @@ const Editor: React.FC = () => {
         <ControlPanel><FontAwesomeIcon icon={faRotateLeft} /></ControlPanel>
       </SidebarLeft>
       <EditorContent>
-        <h1>Editor</h1>
-        <p>This is the editor page.</p>
+        <BinaryPanel>
+          <BinaryDigit>0</BinaryDigit>
+          <BinaryDigit>1</BinaryDigit>
+          <BinaryDigit>0</BinaryDigit>
+          <BinaryDigit>1</BinaryDigit>
+          <BinaryDigit>0</BinaryDigit>
+          <BinaryDigit>1</BinaryDigit>
+          <BinaryDigit>0</BinaryDigit>
+          <BinaryDigit>1</BinaryDigit>
+        </BinaryPanel>
         <SubmitButton>Submit transition</SubmitButton>
       </EditorContent>
       <RightSidebar>
