@@ -24,9 +24,9 @@ export const StyledBinaryPanel = styled.div`
   margin: 1vw;
 `;
 
-type BinaryPanelProps = {
+interface BinaryPanelProps {
     bits: number[]; // array of 0s and 1s
-  };
+};
 
 export const BinaryPanel: React.FC<BinaryPanelProps> = ({ bits }) => {
     return (

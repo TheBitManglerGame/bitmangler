@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRotateLeft } from '@fortawesome/free-solid-svg-icons';
@@ -8,6 +8,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import { BinaryPanel } from "./BinaryPanel";
 import { Operation } from "./Operation";
 import { Control } from "./Control";
+import { Op } from "./Common";
 
 const EditorWrapper = styled.div`
   display: flex;
@@ -70,8 +71,11 @@ const SimpleControl = styled.div`
   }
 `;
 
-const Editor: React.FC = () => {
-    const bits = [0,0,0,0,0,0,0,0];
+const Editor: FC = () => {
+    const [bits, setBits] = useState([0,0,0,0,0,0,0,0]);
+    const [currentOp, setCurrentOp] = useState("Insert operation");
+    console.log("current op", currentOp)
+
     return (
         <DndProvider backend={HTML5Backend}>
             <EditorWrapper>
@@ -81,16 +85,16 @@ const Editor: React.FC = () => {
             </SidebarLeft>
             <EditorContent>
                 <BinaryPanel bits={bits} />
-                <Operation />
+                <Operation content={currentOp} />
                 <SubmitButton>Submit transition</SubmitButton>
             </EditorContent>
             <RightSidebar>
-                <Control name={"1/0"}/>
-                <Control name={">>/<<"}/>
-                <Control name={"AND (&)"}/>
-                <Control name={"OR (|)"}/>
-                <Control name={"XOR (^)"}/>
-                <Control name={"NOT (~)"}/>
+                <SimpleControl>1/0</SimpleControl>
+                <Control name={">>/<<"} setCurrentOp={setCurrentOp} op={Op.SHIFT} />
+                <Control name={"AND (&)"} setCurrentOp={setCurrentOp} op={Op.AND} />
+                <Control name={"OR  (|)"} setCurrentOp={setCurrentOp} op={Op.OR} />
+                <Control name={"XOR (^)"} setCurrentOp={setCurrentOp} op={Op.XOR} />
+                <Control name={"NOT (~)"} setCurrentOp={setCurrentOp} op={Op.NOT} />
             </RightSidebar>
             </EditorWrapper>
         </DndProvider>

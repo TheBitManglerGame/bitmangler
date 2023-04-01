@@ -1,8 +1,8 @@
-import React from 'react';
+import { FC, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useDrag } from 'react-dnd'
 
-import { BinOps } from './BinOps';
+import { OpType, Op } from './Common';
 
 const StyledControl = styled.div`
   height: calc(100% / 6);
@@ -18,21 +18,24 @@ const StyledControl = styled.div`
 `;
 
 export interface ControlProps {
-  name: string
+  name: string,
+  setCurrentOp: Dispatch<SetStateAction<string>>,
+  op: Op,
 }
 
 interface DropResult {
   name: string
 }
 
-export const Control: React.FC<ControlProps> = function Control({ name }) {
+export const Control: FC<ControlProps> = function Control({ name, setCurrentOp, op }) {
   const [{ isDragging }, drag] = useDrag(() => ({
-    type: BinOps.BIN_OPERATION,
-    item: { name },
+    type: OpType.BIN_OPERATION,
+    item: { name, op },
     end: (op, monitor) => {
       const dropResult = monitor.getDropResult<DropResult>()
       if (op && dropResult) {
-        alert(`You selected ${op.name}`)
+        setCurrentOp(op.name);
+        console.log(`${op.name} was selected as an operation`)
       }
     },
     collect: (monitor) => ({
