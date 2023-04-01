@@ -19,7 +19,7 @@ const StyledOperation = styled.div`
 `;
 
 interface OperationProps {
-    content: string,
+    content: Op,
 }
 
 export const Operation: React.FC<OperationProps> = ({content}) => {
@@ -32,9 +32,10 @@ export const Operation: React.FC<OperationProps> = ({content}) => {
         }),
     }))
 
+    const disp = content === Op.NOOP ? "?" : content;
     return (
         <StyledOperation ref={drop}  data-testid="Operation">
-            {canDrop ? "Insert operation" : content}
+            {canDrop ? "Insert operation" : disp}
         </StyledOperation>
     )
 }

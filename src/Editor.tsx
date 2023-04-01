@@ -71,10 +71,41 @@ const SimpleControl = styled.div`
   }
 `;
 
-const Editor: FC = () => {
-    const [bits, setBits] = useState([0,0,0,0,0,0,0,0]);
-    const [currentOp, setCurrentOp] = useState("Insert operation");
-    console.log("current op", currentOp)
+const OutBinaryPanel = styled(BinaryPanel)`
+  align-self: flex-end;
+`;
+
+type Digit = 0 | 1;
+
+function apply(a: Digit[], b: Digit[], op: Op): Digit[] {
+    console.log("[DEBUG]: updateBits", a, b, op);
+    if (op === Op.NOOP) return b;
+    let prepare = (num:number) => num.toString(2).padStart(8, '0').split('').map(n => parseInt(n) as Digit)
+    const an = Number.parseInt(a.join(''), 2);
+    const bn = Number.parseInt(b.join(''), 2);
+    switch (op) {
+        case Op.OR: { return prepare(an | bn) }
+        case Op.AND: { return prepare(an & bn) }
+        case Op.XOR: { return prepare(an ^ bn) }
+        case Op.SHIFTL: { return prepare(an << bn) }
+        case Op.SHIFTR: { return prepare(an >> bn) }
+        case Op.NOT: { return prepare(~an) }
+        default: {
+            console.error("applyBinOp: unexpected op");
+            return [];
+        }
+    }
+}
+
+interface EditorProps {
+    bits: Digit[],
+}
+
+const Editor: FC<EditorProps> = ({bits}) => {
+    const [outBits, setOutBits] = useState([1,1,1,0,0,1,1,1]);
+    const inBits: Digit[] = bits;
+    const [currentOp, setCurrentOp] = useState(Op.NOOP);
+    console.log("[DEBUG] current op:", currentOp)
 
     return (
         <DndProvider backend={HTML5Backend}>
@@ -84,13 +115,15 @@ const Editor: FC = () => {
                 <SimpleControl><FontAwesomeIcon icon={faRotateLeft} /></SimpleControl>
             </SidebarLeft>
             <EditorContent>
-                <BinaryPanel bits={bits} />
+                <BinaryPanel bits={inBits} />
                 <Operation content={currentOp} />
+                { (currentOp != Op.NOOP)
+                    && <OutBinaryPanel bits={apply(inBits, outBits as Digit[], currentOp as Op)} />}
                 <SubmitButton>Submit transition</SubmitButton>
             </EditorContent>
             <RightSidebar>
                 <SimpleControl>1/0</SimpleControl>
-                <Control name={">>/<<"} setCurrentOp={setCurrentOp} op={Op.SHIFT} />
+                <Control name={">>/<<"} setCurrentOp={setCurrentOp} op={Op.SHIFTL} />
                 <Control name={"AND (&)"} setCurrentOp={setCurrentOp} op={Op.AND} />
                 <Control name={"OR  (|)"} setCurrentOp={setCurrentOp} op={Op.OR} />
                 <Control name={"XOR (^)"} setCurrentOp={setCurrentOp} op={Op.XOR} />

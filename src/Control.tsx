@@ -19,7 +19,7 @@ const StyledControl = styled.div`
 
 export interface ControlProps {
   name: string,
-  setCurrentOp: Dispatch<SetStateAction<string>>,
+  setCurrentOp: Dispatch<SetStateAction<Op>>,
   op: Op,
 }
 
@@ -31,11 +31,10 @@ export const Control: FC<ControlProps> = function Control({ name, setCurrentOp, 
   const [{ isDragging }, drag] = useDrag(() => ({
     type: OpType.BIN_OPERATION,
     item: { name, op },
-    end: (op, monitor) => {
+    end: (item, monitor) => {
       const dropResult = monitor.getDropResult<DropResult>()
-      if (op && dropResult) {
-        setCurrentOp(op.name);
-        console.log(`${op.name} was selected as an operation`)
+      if (item.op && dropResult) {
+        setCurrentOp(op);
       }
     },
     collect: (monitor) => ({

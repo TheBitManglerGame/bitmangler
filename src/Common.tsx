@@ -3,9 +3,11 @@ export const enum OpType {
 }
 
 export const enum Op {
-    SHIFT = "Shift",
+    SHIFTL = "SHIFTL",
+    SHIFTR = "SHIFTR",
     OR = "OR",
     XOR = "XOR",
     AND = "AND",
-    NOT = "NOT"
+    NOT = "NOT",
+    NOOP = "NOOP",
 }
