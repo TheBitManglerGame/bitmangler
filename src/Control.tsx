@@ -1,4 +1,4 @@
-import { FC, Dispatch, SetStateAction } from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { useDrag } from 'react-dnd'
 
@@ -19,7 +19,7 @@ const StyledControl = styled.div`
 
 export interface ControlProps {
   name: string,
-  setCurrentOp: Dispatch<SetStateAction<Op>>,
+  setCurrentOp: (op: Op) => void,
   op: Op,
 }
 

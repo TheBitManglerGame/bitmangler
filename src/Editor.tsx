@@ -105,7 +105,14 @@ const Editor: FC<EditorProps> = ({bits}) => {
     const [outBits, setOutBits] = useState([1,1,1,0,0,1,1,1]);
     const inBits: Digit[] = bits;
     const [currentOp, setCurrentOp] = useState(Op.NOOP);
+
     console.log("[DEBUG] current op:", currentOp)
+    console.log("[DEBUG] current outBits:", outBits)
+
+    let onOpChange = (op: Op) => {
+        setCurrentOp(op)
+        setOutBits(apply(inBits, outBits as Digit[], op))
+    }
 
     return (
         <DndProvider backend={HTML5Backend}>
@@ -117,17 +124,17 @@ const Editor: FC<EditorProps> = ({bits}) => {
             <EditorContent>
                 <BinaryPanel bits={inBits} />
                 <Operation content={currentOp} />
-                { (currentOp != Op.NOOP)
-                    && <OutBinaryPanel bits={apply(inBits, outBits as Digit[], currentOp as Op)} />}
+                { (currentOp !== Op.NOOP)
+                    && <OutBinaryPanel bits={outBits} />}
                 <SubmitButton>Submit transition</SubmitButton>
             </EditorContent>
             <RightSidebar>
                 <SimpleControl>1/0</SimpleControl>
-                <Control name={">>/<<"} setCurrentOp={setCurrentOp} op={Op.SHIFTL} />
-                <Control name={"AND (&)"} setCurrentOp={setCurrentOp} op={Op.AND} />
-                <Control name={"OR  (|)"} setCurrentOp={setCurrentOp} op={Op.OR} />
-                <Control name={"XOR (^)"} setCurrentOp={setCurrentOp} op={Op.XOR} />
-                <Control name={"NOT (~)"} setCurrentOp={setCurrentOp} op={Op.NOT} />
+                <Control name={"SHIFT (>> / <<)"} setCurrentOp={onOpChange} op={Op.SHIFTL} />
+                <Control name={"AND (&)"} setCurrentOp={onOpChange} op={Op.AND} />
+                <Control name={"OR  (|)"} setCurrentOp={onOpChange} op={Op.OR} />
+                <Control name={"XOR (^)"} setCurrentOp={onOpChange} op={Op.XOR} />
+                <Control name={"NOT (~)"} setCurrentOp={onOpChange} op={Op.NOT} />
             </RightSidebar>
             </EditorWrapper>
         </DndProvider>
