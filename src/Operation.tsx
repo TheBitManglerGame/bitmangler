@@ -4,42 +4,41 @@ import styled from 'styled-components';
 
 import { BinOps } from './BinOps';
 
-const StyledBinOperand = styled.div`
-  height: 3vw;
-  width: 3vw;
+const StyledOperation = styled.div`
   border: 1px dashed #ddd;
-  margin-top: 20px;
+  margin: 2vw;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #f2f2f2;
+  padding: 2vw;
 
   &:hover {
     cursor: pointer;
   }
 `;
 
-export const BinOperand: React.FC = () => {
+export const Operation: React.FC = () => {
     const [{ canDrop, isOver }, drop] = useDrop(() => ({
-        accept: BinOps.BIN_OPERAND,
+        accept: BinOps.BIN_OPERATION,
         drop: () => ({ name: 'wtfasf' }),
         collect: (monitor) => ({
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop(),
+            isOver: monitor.isOver(),
+            canDrop: monitor.canDrop(),
         }),
     }))
 
     const isActive = canDrop && isOver
-    let backgroundColor = '#222'
-    if (isActive) {
-        backgroundColor = 'darkgreen'
-    } else if (canDrop) {
-        backgroundColor = 'darkkhaki'
-    }
+    // let backgroundColor = '#222'
+    // if (isActive) {
+    //     backgroundColor = 'darkgreen'
+    // } else if (canDrop) {
+    //     backgroundColor = 'darkkhaki'
+    // }
 
     return (
-        <StyledBinOperand ref={drop}  data-testid="binoperand">
+        <StyledOperation ref={drop}  data-testid="Operation">
         {isActive ? 'Release to drop' : 'Drag operand here'}
-        </StyledBinOperand>
+        </StyledOperation>
     )
 }

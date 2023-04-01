@@ -27,12 +27,12 @@ interface DropResult {
 
 export const Control: React.FC<ControlProps> = function Control({ name }) {
   const [{ isDragging }, drag] = useDrag(() => ({
-    type: BinOps.BIN_OPERAND,
+    type: BinOps.BIN_OPERATION,
     item: { name },
     end: (op, monitor) => {
       const dropResult = monitor.getDropResult<DropResult>()
       if (op && dropResult) {
-        alert(`You dropped ${op.name} into ${dropResult.name}!`)
+        alert(`You selected ${op.name}`)
       }
     },
     collect: (monitor) => ({

@@ -1,3 +1,3 @@
 export const BinOps = {
-    BIN_OPERAND: 'binOperand',
+    BIN_OPERATION: 'Operation',
   }

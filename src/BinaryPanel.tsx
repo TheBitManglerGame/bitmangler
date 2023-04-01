@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const BinaryDigit = styled.div`
   display: flex;
@@ -21,6 +21,7 @@ export const StyledBinaryPanel = styled.div`
   justify-content: space-between;
   align-items: center;
   width 70%;
+  margin: 1vw;
 `;
 
 type BinaryPanelProps = {

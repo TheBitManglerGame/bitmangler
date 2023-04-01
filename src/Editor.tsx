@@ -6,7 +6,7 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 
 import { BinaryPanel } from "./BinaryPanel";
-import { BinOperand } from "./BinOperand";
+import { Operation } from "./Operation";
 import { Control } from "./Control";
 
 const EditorWrapper = styled.div`
@@ -72,29 +72,29 @@ const SimpleControl = styled.div`
 
 const Editor: React.FC = () => {
     const bits = [0,0,0,0,0,0,0,0];
-  return (
-    <DndProvider backend={HTML5Backend}>
-        <EditorWrapper>
-        <SidebarLeft>
-            <SimpleControl>HELP</SimpleControl>
-            <SimpleControl><FontAwesomeIcon icon={faRotateLeft} /></SimpleControl>
-        </SidebarLeft>
-        <EditorContent>
-            <BinaryPanel bits={bits} />
-            <BinOperand />
-            <SubmitButton>Submit transition</SubmitButton>
-        </EditorContent>
-        <RightSidebar>
-            <Control name={"1/0"}/>
-            <Control name={">>/<<"}/>
-            <Control name={"AND (&)"}/>
-            <Control name={"OR (|)"}/>
-            <Control name={"XOR (^)"}/>
-            <Control name={"NOT (~)"}/>
-        </RightSidebar>
-        </EditorWrapper>
-    </DndProvider>
-  );
+    return (
+        <DndProvider backend={HTML5Backend}>
+            <EditorWrapper>
+            <SidebarLeft>
+                <SimpleControl>HELP</SimpleControl>
+                <SimpleControl><FontAwesomeIcon icon={faRotateLeft} /></SimpleControl>
+            </SidebarLeft>
+            <EditorContent>
+                <BinaryPanel bits={bits} />
+                <Operation />
+                <SubmitButton>Submit transition</SubmitButton>
+            </EditorContent>
+            <RightSidebar>
+                <Control name={"1/0"}/>
+                <Control name={">>/<<"}/>
+                <Control name={"AND (&)"}/>
+                <Control name={"OR (|)"}/>
+                <Control name={"XOR (^)"}/>
+                <Control name={"NOT (~)"}/>
+            </RightSidebar>
+            </EditorWrapper>
+        </DndProvider>
+    );
 };
 
 export default Editor;
