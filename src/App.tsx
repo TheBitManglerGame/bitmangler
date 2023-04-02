@@ -7,7 +7,7 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/about" element={<About />} />
-        <Route path="/editor" element={<Editor bits={[0,0,0,0,0,0,0,0]} />} />
+        <Route path="/editor" element={<Editor bits={[0,0,0,0,0,0,0,1]} />} />
       </Routes>
     </Router>
   );

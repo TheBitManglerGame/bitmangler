@@ -1,5 +1,7 @@
 import React from 'react';
+import { useDrop } from 'react-dnd';
 import styled from 'styled-components';
+import { OpType } from './Common';
 
 const BinaryDigit = styled.div`
   display: flex;
@@ -33,6 +35,24 @@ interface BinaryPanelProps {
 export const BinaryPanel: React.FC<BinaryPanelProps> = ({ bits, fontColor }) => {
     return (
         <StyledBinaryPanel fontColor={fontColor}>
+        {bits.map((bit, index) => (
+            <BinaryDigit key={index}>{bit}</BinaryDigit>
+        ))}
+        </StyledBinaryPanel>
+    );
+};
+
+export const ConstBinaryPanel: React.FC<BinaryPanelProps> = ({ bits, fontColor }) => {
+    const [canDrop, drop] = useDrop(() => ({
+        accept: OpType.CONST_OPERATION,
+        drop: () => ({}),
+        collect: (monitor) => ({
+            isOver: monitor.isOver(),
+            canDrop: monitor.canDrop(),
+        }),
+    }))
+    return (
+        <StyledBinaryPanel ref={drop} fontColor={fontColor}>
         {bits.map((bit, index) => (
             <BinaryDigit key={index}>{bit}</BinaryDigit>
         ))}

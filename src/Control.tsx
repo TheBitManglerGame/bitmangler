@@ -78,7 +78,8 @@ export const ConstControl: FC<ConstControlProps> = function ConstControl({ name,
     item: { name, operand },
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult<DropResult>()
-      if (item.operand && dropResult) {
+      if ((item.operand === 1
+         || item.operand === 0) && dropResult) {
         console.log("dropped", item.operand)
         setConstOperand(item.operand);
       }
