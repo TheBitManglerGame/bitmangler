@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { faRotateLeft, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 
@@ -71,8 +71,9 @@ const SimpleControl = styled.div`
   }
 `;
 
-const OutBinaryPanel = styled(BinaryPanel)`
-  align-self: flex-end;
+const ResultArrow = styled.div`
+  font-size: 2vw;
+  margin: 2vw;
 `;
 
 type Digit = 0 | 1;
@@ -102,8 +103,8 @@ interface EditorProps {
 }
 
 const Editor: FC<EditorProps> = ({bits}) => {
-    const [outBits, setOutBits] = useState([1,1,1,0,0,1,1,1]);
     const inBits: Digit[] = bits;
+    const [outBits, setOutBits] = useState(inBits);
     const [currentOp, setCurrentOp] = useState(Op.NOOP);
 
     console.log("[DEBUG] current op:", currentOp)
@@ -114,6 +115,10 @@ const Editor: FC<EditorProps> = ({bits}) => {
         setOutBits(apply(inBits, outBits as Digit[], op))
     }
 
+    // let binOpActive = currentOp === Op.AND
+    //                 || currentOp === Op.OR
+    //                 || currentOp === Op.XOR;
+
     return (
         <DndProvider backend={HTML5Backend}>
             <EditorWrapper>
@@ -122,10 +127,10 @@ const Editor: FC<EditorProps> = ({bits}) => {
                 <SimpleControl><FontAwesomeIcon icon={faRotateLeft} /></SimpleControl>
             </SidebarLeft>
             <EditorContent>
-                <BinaryPanel bits={inBits} />
+                <BinaryPanel bits={inBits} fontColor="black" />
                 <Operation content={currentOp} />
-                { (currentOp !== Op.NOOP)
-                    && <OutBinaryPanel bits={outBits} />}
+                <ResultArrow> <FontAwesomeIcon icon={faArrowDown} color="#e2e0df"/> </ResultArrow>
+                <BinaryPanel bits={outBits} fontColor="#e2e0df" />
                 <SubmitButton>Submit transition</SubmitButton>
             </EditorContent>
             <RightSidebar>

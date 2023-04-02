@@ -16,21 +16,23 @@ const BinaryDigit = styled.div`
   }
 `;
 
-export const StyledBinaryPanel = styled.div`
+export const StyledBinaryPanel = styled.div<{fontColor: string}>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   width 70%;
   margin: 1vw;
+  color: ${props => props.fontColor};
 `;
 
 interface BinaryPanelProps {
     bits: number[]; // array of 0s and 1s
+    fontColor: string;
 };
 
-export const BinaryPanel: React.FC<BinaryPanelProps> = ({ bits }) => {
+export const BinaryPanel: React.FC<BinaryPanelProps> = ({ bits, fontColor }) => {
     return (
-        <StyledBinaryPanel>
+        <StyledBinaryPanel fontColor={fontColor}>
         {bits.map((bit, index) => (
             <BinaryDigit key={index}>{bit}</BinaryDigit>
         ))}
