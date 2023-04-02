@@ -43,6 +43,7 @@ export const BinaryPanel: React.FC<BinaryPanelProps> = ({ bits, fontColor }) => 
 };
 
 export const ConstBinaryPanel: React.FC<BinaryPanelProps> = ({ bits, fontColor }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [canDrop, drop] = useDrop(() => ({
         accept: OpType.CONST_OPERATION,
         drop: () => ({}),

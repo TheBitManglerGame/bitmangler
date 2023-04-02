@@ -1,9 +1,9 @@
-import React from 'react';
+import { FC } from 'react';
 import { useDrop } from 'react-dnd';
 import styled from 'styled-components';
 
 import { ConstBinaryPanel } from './BinaryPanel';
-import { OpType, Digit, prepare } from './Common';
+import { OpType, Digit, digitsToInt } from './Common';
 
 const StyledConst = styled.div<{color?: string}>`
   margin: 1vw;
@@ -24,10 +24,10 @@ const StyledConst = styled.div<{color?: string}>`
 `;
 
 interface ConstOPerandProps {
-    constOperand: Digit | null,
+    constOperand: Digit[] | null,
 }
 
-export const ConstOperand: React.FC<ConstOPerandProps> = ({constOperand}) => {
+export const ConstOperand: FC<ConstOPerandProps> = ({constOperand}) => {
     const [{ canDrop }, drop] = useDrop(() => ({
         accept: OpType.CONST_OPERATION,
         drop: () => ({}),
@@ -37,11 +37,12 @@ export const ConstOperand: React.FC<ConstOPerandProps> = ({constOperand}) => {
         }),
     }))
 
-    if (constOperand === 0 || constOperand === 1) {
-        return (<ConstBinaryPanel bits={prepare(constOperand)} fontColor={canDrop ? "black" : "grey"} />)
+    if (constOperand !== null
+        && (digitsToInt(constOperand) === 0 || digitsToInt(constOperand) === 1)) {
+        return (<ConstBinaryPanel bits={constOperand} fontColor={canDrop ? "black" : "grey"} />)
     } else {
         return (<StyledConst ref={drop}  data-testid="ConstOperandMsg" color={canDrop ? "black" : "grey"}>
-                    {"Insert constant (0 or 1)"}
-                </StyledConst>)
+                {"Insert constant (0 or 1)"}
+                </StyledConst>);
     }
 }

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRotateLeft, faArrowDown } from '@fortawesome/free-solid-svg-icons';
@@ -8,8 +8,9 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import { BinaryPanel } from "./BinaryPanel";
 import { Operation } from "./Operation";
 import { ConstControl, Control } from "./Control";
-import { Digit, Op, prepare } from "./Common";
+import { Digit, Op, ONE, ZERO } from "./Common";
 import { ConstOperand } from "./Const";
+import { evalExpr } from './Eval';
 
 const EditorWrapper = styled.div`
   display: flex;
@@ -86,49 +87,32 @@ const SplitControl = styled.div`
   align-items: center;
 `;
 
-function apply(a: Digit[], b: Digit[], op: Op): Digit[] {
-    // console.log("[DEBUG]: updateBits", a, b, op);
-    if (op === Op.NOOP) return b;
-    const an = Number.parseInt(a.join(''), 2);
-    const bn = Number.parseInt(b.join(''), 2);
-    switch (op) {
-        case Op.OR: { return prepare(an | bn) }
-        case Op.AND: { return prepare(an & bn) }
-        case Op.XOR: { return prepare(an ^ bn) }
-        case Op.SHIFTL: { return prepare(an << bn) }
-        case Op.SHIFTR: { return prepare(an >> bn) }
-        case Op.NOT: { return prepare(~an) }
-        default: {
-            console.error("applyBinOp: unexpected op");
-            return [];
-        }
-    }
-}
-
 interface EditorProps {
     bits: Digit[],
 }
 
 const Editor: FC<EditorProps> = ({bits}) => {
     const inBits: Digit[] = bits;
+    const [binOp, setbinOp] = useState(Op.NOOP);
+    const [constOperand, setConstOperand] = useState<Digit[]|null>(null);
     const [outBits, setOutBits] = useState(inBits);
-    const [currentOp, setCurrentOp] = useState(Op.NOOP);
-    const [constOperand, setConstOperand] = useState<Digit|null>(null);
 
-    console.log("[DEBUG] current op:", currentOp);
+    console.log("[DEBUG] current inBits:", outBits);
+    console.log("[DEBUG] current binary operation:", binOp);
     console.log("[DEBUG] current operand:", constOperand);
     console.log("[DEBUG] current outBits:", outBits);
 
-    let onOpChange = (op: Op) => {
-        setCurrentOp(op);
-        setOutBits(apply(inBits, outBits as Digit[], op));
-    }
+    // re-compute the output of the computational frame
+    useEffect(() => {
+        console.log("[DEBUG]: useEffect: EVAL_EXPR", inBits, binOp, constOperand);
+        setOutBits(evalExpr(inBits, constOperand, binOp));
+    }, [inBits, binOp, constOperand]);
 
-    let binOpActive = currentOp === Op.AND
-                    || currentOp === Op.OR
-                    || currentOp === Op.XOR
-                    || currentOp === Op.SHIFTR
-                    || currentOp === Op.SHIFTL;
+    let binOpActive = binOp === Op.AND
+                    || binOp === Op.OR
+                    || binOp === Op.XOR
+                    || binOp === Op.SHIFTR
+                    || binOp === Op.SHIFTL;
 
     return (
         <DndProvider backend={HTML5Backend}>
@@ -139,7 +123,7 @@ const Editor: FC<EditorProps> = ({bits}) => {
             </SidebarLeft>
             <EditorContent>
                 <BinaryPanel bits={inBits} fontColor="black" />
-                <Operation content={currentOp} />
+                <Operation content={binOp} />
                 { binOpActive && <ConstOperand constOperand={constOperand} /> }
                 <ResultArrow> <FontAwesomeIcon icon={faArrowDown} color="#e2e0df"/> </ResultArrow>
                 <BinaryPanel bits={outBits} fontColor="#e2e0df" />
@@ -147,15 +131,13 @@ const Editor: FC<EditorProps> = ({bits}) => {
             </EditorContent>
             <RightSidebar>
                 <SplitControl>
-                    <ConstControl name={"1"} setConstOperand={setConstOperand} operand={1} />
-                     OR
-                    <ConstControl name={"0"} setConstOperand={setConstOperand} operand={0} />
+                    <ConstControl name={"1"} setConstOperand={setConstOperand} operand={ONE} /> OR
+                    <ConstControl name={"0"} setConstOperand={setConstOperand} operand={ZERO} />
                 </SplitControl>
-                <Control name={"SHIFT (>> / <<)"} setCurrentOp={onOpChange} op={Op.SHIFTL} />
-                <Control name={"AND (&)"} setCurrentOp={onOpChange} op={Op.AND} />
-                <Control name={"OR  (|)"} setCurrentOp={onOpChange} op={Op.OR} />
-                <Control name={"XOR (^)"} setCurrentOp={onOpChange} op={Op.XOR} />
-                <Control name={"NOT (~)"} setCurrentOp={onOpChange} op={Op.NOT} />
+                <Control name={"AND (&)"} setbinOp={setbinOp} op={Op.AND} />
+                <Control name={"OR  (|)"} setbinOp={setbinOp} op={Op.OR} />
+                <Control name={"XOR (^)"} setbinOp={setbinOp} op={Op.XOR} />
+                <Control name={"NOT (~)"} setbinOp={setbinOp} op={Op.NOT} />
             </RightSidebar>
             </EditorWrapper>
         </DndProvider>
