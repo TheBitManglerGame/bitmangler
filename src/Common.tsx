@@ -30,5 +30,5 @@ export function digitsToInt(inBits: Digit[]) {
     return Number.parseInt(inBits.join(''), 2);
 }
 
-export const ONE: Digit[] = intToDigits(1);
+export const ONE: Digit[]  = intToDigits(1);
 export const ZERO: Digit[] = intToDigits(0);

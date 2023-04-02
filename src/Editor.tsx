@@ -104,7 +104,7 @@ const Editor: FC<EditorProps> = ({bits}) => {
 
     // re-compute the output of the computational frame
     useEffect(() => {
-        console.log("[DEBUG]: useEffect: EVAL_EXPR", inBits, binOp, constOperand);
+        console.debug("[DEBUG]: useEffect: EVAL_EXPR", inBits, binOp, constOperand);
         setOutBits(evalExpr(inBits, constOperand, binOp));
     }, [inBits, binOp, constOperand]);
 
