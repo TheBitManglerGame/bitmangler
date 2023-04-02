@@ -7,8 +7,9 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 
 import { BinaryPanel } from "./BinaryPanel";
 import { Operation } from "./Operation";
-import { Control } from "./Control";
-import { Op } from "./Common";
+import { ConstControl, Control } from "./Control";
+import { Digit, Op, prepare } from "./Common";
+import { ConstOperand } from "./Const";
 
 const EditorWrapper = styled.div`
   display: flex;
@@ -76,12 +77,18 @@ const ResultArrow = styled.div`
   margin: 2vw;
 `;
 
-type Digit = 0 | 1;
+const SplitControl = styled.div`
+  height: calc(100% / 6);
+  background-color: #f2f2f2;
+  border: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 function apply(a: Digit[], b: Digit[], op: Op): Digit[] {
-    console.log("[DEBUG]: updateBits", a, b, op);
+    // console.log("[DEBUG]: updateBits", a, b, op);
     if (op === Op.NOOP) return b;
-    let prepare = (num:number) => num.toString(2).padStart(8, '0').split('').map(n => parseInt(n) as Digit)
     const an = Number.parseInt(a.join(''), 2);
     const bn = Number.parseInt(b.join(''), 2);
     switch (op) {
@@ -106,18 +113,22 @@ const Editor: FC<EditorProps> = ({bits}) => {
     const inBits: Digit[] = bits;
     const [outBits, setOutBits] = useState(inBits);
     const [currentOp, setCurrentOp] = useState(Op.NOOP);
+    const [constOperand, setConstOperand] = useState<Digit|null>(null);
 
-    console.log("[DEBUG] current op:", currentOp)
-    console.log("[DEBUG] current outBits:", outBits)
+    console.log("[DEBUG] current op:", currentOp);
+    console.log("[DEBUG] current operand:", constOperand);
+    console.log("[DEBUG] current outBits:", outBits);
 
     let onOpChange = (op: Op) => {
-        setCurrentOp(op)
-        setOutBits(apply(inBits, outBits as Digit[], op))
+        setCurrentOp(op);
+        setOutBits(apply(inBits, outBits as Digit[], op));
     }
 
-    // let binOpActive = currentOp === Op.AND
-    //                 || currentOp === Op.OR
-    //                 || currentOp === Op.XOR;
+    let binOpActive = currentOp === Op.AND
+                    || currentOp === Op.OR
+                    || currentOp === Op.XOR
+                    || currentOp === Op.SHIFTR
+                    || currentOp === Op.SHIFTL;
 
     return (
         <DndProvider backend={HTML5Backend}>
@@ -129,12 +140,17 @@ const Editor: FC<EditorProps> = ({bits}) => {
             <EditorContent>
                 <BinaryPanel bits={inBits} fontColor="black" />
                 <Operation content={currentOp} />
+                { binOpActive && <ConstOperand constOperand={constOperand} /> }
                 <ResultArrow> <FontAwesomeIcon icon={faArrowDown} color="#e2e0df"/> </ResultArrow>
                 <BinaryPanel bits={outBits} fontColor="#e2e0df" />
                 <SubmitButton>Submit transition</SubmitButton>
             </EditorContent>
             <RightSidebar>
-                <SimpleControl>1/0</SimpleControl>
+                <SplitControl>
+                    <ConstControl name={"1"} setConstOperand={setConstOperand} operand={1} />
+                     OR
+                    <ConstControl name={"0"} setConstOperand={setConstOperand} operand={0} />
+                </SplitControl>
                 <Control name={"SHIFT (>> / <<)"} setCurrentOp={onOpChange} op={Op.SHIFTL} />
                 <Control name={"AND (&)"} setCurrentOp={onOpChange} op={Op.AND} />
                 <Control name={"OR  (|)"} setCurrentOp={onOpChange} op={Op.OR} />
