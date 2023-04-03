@@ -30,13 +30,14 @@ export const StyledBinaryPanel = styled.div<{fontColor: string}>`
 `;
 
 interface BinaryPanelProps {
-    fontColor: string;
+    fontColor?: string;
     operandState: OperandState;
     setOperandState?: React.Dispatch<React.SetStateAction<OperandState>>;
-};
+    isConst?: boolean;
+}
 
-export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOperandState, fontColor }) => {
-    const { bits, shift } = operandState;
+const useBinaryPanel = ({ operandState, setOperandState }: BinaryPanelProps) => {
+    const { shift } = operandState;
     const updateShift = useCallback((direction: number) => {
         if (shift !== null && ((shift === -7 && direction < 0) || (shift === 7 && direction > 0))) return;
         if (setOperandState) setOperandState((prevState: OperandState) => ({
@@ -45,20 +46,18 @@ export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOpera
             shift: shift + direction
         }));
     }, [shift, setOperandState, operandState]);
-    return (
-        <StyledBinaryPanel fontColor={fontColor}>
-        {shift !== null &&
-            <ShiftControl direction={ShiftDir.LEFT} shiftAmount={shift} onClick={() => updateShift(-1)} />}
-        {bits.map((bit, index) => (
-            <BinaryDigit key={index}>{bit}</BinaryDigit>
-        ))}
-        {shift !== null &&
-            <ShiftControl direction={ShiftDir.RIGHT} shiftAmount={shift} onClick={() => updateShift(1)} />}
-        </StyledBinaryPanel>
-    );
+
+    return {
+        updateLeftShift: () => updateShift(-1),
+        updateRightShift: () => updateShift(1),
+    };
 };
 
-export const ConstBinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOperandState, fontColor }) => {
+
+export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOperandState, fontColor, isConst = false }) => {
+    const { bits } = operandState;
+    const { updateLeftShift, updateRightShift } = useBinaryPanel({ operandState, setOperandState });
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [canDrop, drop] = useDrop(() => ({
         accept: OpType.CONST_OPERATION,
@@ -67,27 +66,17 @@ export const ConstBinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, set
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
         }),
-    }))
-
-    const { bits, shift } = operandState;
-    const updateShift = useCallback((direction: number) => {
-        if (shift !== null && ((shift === -7 && direction < 0) || (shift === 7 && direction > 0))) return;
-        if (setOperandState) setOperandState((prevState: OperandState) => ({
-            ...prevState,
-            bits: evalShift(operandState.originalBits, shift + direction),
-            shift: shift + direction
-        }));
-    }, [shift, setOperandState, operandState]);
+    }));
 
     return (
-        <StyledBinaryPanel ref={drop} fontColor={fontColor}>
-        {shift !== null &&
-            <ShiftControl direction={ShiftDir.LEFT} shiftAmount={shift} onClick={() => updateShift(-1)} />}
-        {bits.map((bit, index) => (
-            <BinaryDigit key={index}>{bit}</BinaryDigit>
-        ))}
-        {shift !== null &&
-            <ShiftControl direction={ShiftDir.RIGHT} shiftAmount={shift} onClick={() => updateShift(1)} />}
+        <StyledBinaryPanel ref={isConst ? drop : null} fontColor={fontColor || "black"}>
+            {operandState.shift !== null &&
+                <ShiftControl direction={ShiftDir.LEFT} shiftAmount={operandState.shift} onClick={updateLeftShift} />}
+            {bits.map((bit, index) => (
+                <BinaryDigit key={index}>{bit}</BinaryDigit>
+            ))}
+            {operandState.shift !== null &&
+                <ShiftControl direction={ShiftDir.RIGHT} shiftAmount={operandState.shift} onClick={updateRightShift} />}
         </StyledBinaryPanel>
     );
 };

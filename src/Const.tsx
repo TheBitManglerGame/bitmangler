@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useDrop } from 'react-dnd';
 import styled from 'styled-components';
 
-import { ConstBinaryPanel } from './BinaryPanel';
+import { BinaryPanel } from './BinaryPanel';
 import { OpType, OperandState } from './Common';
 
 const StyledConst = styled.div<{color?: string}>`
@@ -39,7 +39,7 @@ export const ConstOperand: FC<ConstOPerandProps> = ({operandState, setOperandSta
     }))
 
     if (operandState !== null) {
-        return (<ConstBinaryPanel operandState={operandState} setOperandState={setOperandState} fontColor={canDrop ? "black" : "grey"} />)
+        return (<BinaryPanel isConst={true} operandState={operandState} setOperandState={setOperandState} fontColor={canDrop ? "black" : "grey"} />)
     } else {
         return (<StyledConst ref={drop}  data-testid="ConstOperandMsg" color={canDrop ? "black" : "grey"}>
                 {"Insert constant (0 or 1)"}
