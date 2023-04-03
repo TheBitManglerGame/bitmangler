@@ -18,8 +18,6 @@ describe('About page', () => {
 
 		const aboutDescriptopn = screen.getByText(/this is the about page./i);
 		expect(aboutDescriptopn).toBeInTheDocument()
-
-		screen.debug();
 	})
 })
 
