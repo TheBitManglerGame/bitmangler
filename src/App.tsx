@@ -6,11 +6,11 @@ import Editor from './Editor';
 const App: React.FC = () => {
   return (
     <Router>
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/editor" element={<Editor bits={[0,0,0,0,0,0,0,1]} />} />
-    </Routes>
+      <Routes>
+        <Route index element={<HomePage />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/editor" element={<Editor bits={[0,0,0,0,0,0,0,1]} />} />
+      </Routes>
   </Router>
   );
 };
