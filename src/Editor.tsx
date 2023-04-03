@@ -8,7 +8,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import { BinaryPanel } from "./BinaryPanel";
 import { Operation } from "./Operation";
 import { ConstControl, Control } from "./Control";
-import { Digit, Op, ONE, ZERO } from "./Common";
+import { Digit, Op, ONE, ZERO, OperandState } from "./Common";
 import { ConstOperand } from "./Const";
 import { evalExpr } from './Eval';
 
@@ -92,27 +92,24 @@ interface EditorProps {
 }
 
 const Editor: FC<EditorProps> = ({bits}) => {
-    const inBits: Digit[] = bits;
+    const [inBitsState, setInBitsState] = useState<OperandState>({originalBits: bits, bits, shift: 0});
+    const [constOperandState, setConstOperandState] = useState<OperandState>({originalBits: ONE, bits: ONE, shift: 0});
     const [binOp, setbinOp] = useState(Op.NOOP);
-    const [constOperand, setConstOperand] = useState<Digit[]|null>(null);
-    const [outBits, setOutBits] = useState(inBits);
+    const [outBits, setOutBits] = useState(inBitsState.bits);
 
-    console.log("[DEBUG] current inBits:", outBits);
+    console.log("[DEBUG] ===== CURRENT STATE =====");
+    console.log("[DEBUG] current inBits:", inBitsState);
     console.log("[DEBUG] current binary operation:", binOp);
-    console.log("[DEBUG] current operand:", constOperand);
+    console.log("[DEBUG] current operand:", constOperandState);
     console.log("[DEBUG] current outBits:", outBits);
 
-    // re-compute the output of the computational frame
+    // re-evaluate output of computational frame
     useEffect(() => {
-        console.debug("[DEBUG]: useEffect: EVAL_EXPR", inBits, binOp, constOperand);
-        setOutBits(evalExpr(inBits, constOperand, binOp));
-    }, [inBits, binOp, constOperand]);
+        console.debug("[DEBUG]: useEffect: EVAL_EXPR", inBitsState, binOp, constOperandState);
+        setOutBits(evalExpr(inBitsState.bits, constOperandState.bits, binOp));
+    }, [inBitsState, binOp, constOperandState]);
 
-    let binOpActive = binOp === Op.AND
-                    || binOp === Op.OR
-                    || binOp === Op.XOR
-                    || binOp === Op.SHIFTR
-                    || binOp === Op.SHIFTL;
+    const binOpActive = binOp === Op.AND || binOp === Op.OR || binOp === Op.XOR;
 
     return (
         <DndProvider backend={HTML5Backend}>
@@ -122,17 +119,17 @@ const Editor: FC<EditorProps> = ({bits}) => {
                 <SimpleControl><FontAwesomeIcon icon={faRotateLeft} /></SimpleControl>
             </SidebarLeft>
             <EditorContent>
-                <BinaryPanel bits={inBits} fontColor="black" />
+                <BinaryPanel fontColor="black" operandState={inBitsState} setOperandState={setInBitsState} />
                 <Operation content={binOp} />
-                { binOpActive && <ConstOperand constOperand={constOperand} /> }
+                { binOpActive && <ConstOperand  operandState={constOperandState} setOperandState={setConstOperandState} /> }
                 <ResultArrow> <FontAwesomeIcon icon={faArrowDown} color="#e2e0df"/> </ResultArrow>
-                <BinaryPanel bits={outBits} fontColor="#e2e0df" />
+                <BinaryPanel fontColor="#e2e0df" operandState={{originalBits: outBits, bits: outBits, shift: 0}} />
                 <SubmitButton>Submit transition</SubmitButton>
             </EditorContent>
             <RightSidebar>
                 <SplitControl>
-                    <ConstControl name={"1"} setConstOperand={setConstOperand} operand={ONE} /> OR
-                    <ConstControl name={"0"} setConstOperand={setConstOperand} operand={ZERO} />
+                    <ConstControl name={"1"} setOperandState={setConstOperandState} operand={ONE} /> OR
+                    <ConstControl name={"0"} setOperandState={setConstOperandState} operand={ZERO} />
                 </SplitControl>
                 <Control name={"AND (&)"} setbinOp={setbinOp} op={Op.AND} />
                 <Control name={"OR  (|)"} setbinOp={setbinOp} op={Op.OR} />

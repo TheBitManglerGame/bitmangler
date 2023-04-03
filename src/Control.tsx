@@ -2,7 +2,8 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { useDrag } from 'react-dnd'
 
-import { OpType, Op, Digit, digitsToInt } from './Common';
+import { OpType, Op, Digit, digitsToInt, ShiftDir, renderDirection, OperandState } from './Common';
+import { evalShift } from './Eval';
 
 const StyledControl = styled.div`
   height: calc(100% / 4.8);
@@ -68,20 +69,24 @@ export const Control: FC<ControlProps> = function Control({ name, setbinOp, op }
 
 export interface ConstControlProps {
   name: string,
-  setConstOperand: (operand: Digit[]) => void,
+  setOperandState: React.Dispatch<React.SetStateAction<OperandState>>,
   operand: Digit[],
 }
 
-export const ConstControl: FC<ConstControlProps> = function ConstControl({ name, setConstOperand, operand }) {
+export const ConstControl: FC<ConstControlProps> = function ConstControl({ name, setOperandState, operand }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: OpType.CONST_OPERATION,
     item: { name, operand },
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult<DropResult>()
       if ((digitsToInt(item.operand) === 1
-         || digitsToInt(item.operand) === 0) && dropResult) {
+          || digitsToInt(item.operand) === 0) && dropResult) {
         console.log("dropped", item.operand)
-        setConstOperand(item.operand);
+        setOperandState((prevState: OperandState) => ({
+            ...prevState,
+            originalBits: item.operand,
+            bits: evalShift(item.operand, prevState.shift),
+          }));
       }
     },
     collect: (monitor) => ({
@@ -95,5 +100,30 @@ export const ConstControl: FC<ConstControlProps> = function ConstControl({ name,
     <StyledSplitControl ref={drag} style={{ opacity }} data-testid={`StyledSplitControl`}>
       {name}
     </StyledSplitControl>
+  )
+}
+
+const StyledShiftControl = styled.div`
+  font-size: 1.5vw;
+  opacity: 0.4;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+interface ShiftControlProps {
+  direction: ShiftDir;
+  shiftAmount: number;
+  onClick: (e:any) => void;
+}
+
+export const ShiftControl: FC<ShiftControlProps> = function ShiftControl({direction, shiftAmount, onClick}) {
+  return (
+    <StyledShiftControl onClick={onClick}>
+      {renderDirection(direction)}
+      {direction === ShiftDir.LEFT && shiftAmount < 0 ? shiftAmount : ""}
+      {direction === ShiftDir.RIGHT && shiftAmount > 0 ? shiftAmount : ""}
+    </StyledShiftControl>
   )
 }

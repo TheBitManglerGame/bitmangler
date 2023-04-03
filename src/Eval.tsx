@@ -24,8 +24,6 @@ export function evalExpr(inBits: Digit[], constOperand: Digit[]|null, op: Op): D
         case Op.OR:     { res = intToDigits(an | bn); break; }
         case Op.AND:    { res = intToDigits(an & bn); break; }
         case Op.XOR:    { res = intToDigits(an ^ bn); break; }
-        case Op.SHIFTL: { res = intToDigits(an << bn); break; }
-        case Op.SHIFTR: { res = intToDigits(an >> bn); break; }
         default: {
             console.error("applybinOp: unexpected op", op);
             res = [];
@@ -33,4 +31,20 @@ export function evalExpr(inBits: Digit[], constOperand: Digit[]|null, op: Op): D
     }
     console.debug("[DEBUG]: eval: result: ", res);
     return res;
+}
+export function evalShift(bits: Digit[], shiftAmount: number): Digit[] {
+    if (shiftAmount === 0) {
+        return bits;
+    }
+
+    const isLeftShift = shiftAmount < 0;
+    const absShiftAmount = Math.abs(shiftAmount);
+
+    if (isLeftShift) {
+        console.debug("[DEBUG] evalShift: LEFT", bits, shiftAmount);
+        return [...bits.slice(absShiftAmount), ...Array(absShiftAmount).fill(0)];
+    } else {
+        console.debug("[DEBUG] evalShift: RIGHT", bits, shiftAmount);
+        return [...Array(absShiftAmount).fill(0), ...bits.slice(0, 8 - absShiftAmount)];
+    }
 }
