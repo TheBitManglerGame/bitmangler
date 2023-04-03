@@ -4,13 +4,18 @@ export const enum OpType {
 }
 
 export const enum Op {
-    SHIFTL = "SHIFTL",
-    SHIFTR = "SHIFTR",
     OR = "OR",
     XOR = "XOR",
     AND = "AND",
     NOT = "NOT",
     NOOP = "NOOP",
+}
+
+export enum ShiftDir { LEFT = 'LEFT', RIGHT ='RIGHT' };
+
+export function renderDirection(dir: ShiftDir) {
+  if (dir === ShiftDir.LEFT) return "<<";
+  if (dir === ShiftDir.RIGHT) return ">>";
 }
 
 export type Digit = 0 | 1;
@@ -32,3 +37,9 @@ export function digitsToInt(inBits: Digit[]) {
 
 export const ONE: Digit[]  = intToDigits(1);
 export const ZERO: Digit[] = intToDigits(0);
+
+export interface OperandState {
+  originalBits: Digit[]
+  bits: Digit[];
+  shift: number;
+}
