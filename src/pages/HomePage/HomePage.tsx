@@ -14,9 +14,9 @@ const HomePage: React.FC = () => {
     <div>
       <h1>Home Page</h1>
       <p>This is going to be the landing page</p>
-      <button role="button" onClick={navigateToAbout} type="button"> About </button>
+      <button onClick={navigateToAbout} type="button"> About </button>
       <br/>
-      <button role="button" onClick={navigateToEditor} type="button"> Editor </button>
+      <button onClick={navigateToEditor} type="button"> Editor </button>
     </div>
   );
 };
