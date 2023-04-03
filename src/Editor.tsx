@@ -1,22 +1,22 @@
-import { FC, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRotateLeft, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { type FC, useEffect, useState } from 'react'
+import styled from 'styled-components'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faRotateLeft, faArrowDown } from '@fortawesome/free-solid-svg-icons'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 
-import { BinaryPanel } from "./BinaryPanel";
-import { Operation } from "./Operation";
-import { ConstControl, Control } from "./Control";
-import { Digit, Op, ONE, ZERO } from "./Common";
-import { ConstOperand } from "./Const";
-import { evalExpr } from './Eval';
+import { BinaryPanel } from './BinaryPanel'
+import { Operation } from './Operation'
+import { ConstControl, Control } from './Control'
+import { type Digit, Op, ONE, ZERO } from './Common'
+import { ConstOperand } from './Const'
+import { evalExpr } from './Eval'
 
 const EditorWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-`;
+`
 
 const EditorContent = styled.div`
   width: 80%;
@@ -26,7 +26,7 @@ const EditorContent = styled.div`
   justify-content: flex-end;
   margin-top: 2.5vw;
   margin-bottom: 20px;
-`;
+`
 
 const SubmitButton = styled.button`
   position: fixed;
@@ -41,7 +41,7 @@ const SubmitButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   font-size: 2vw;
-`;
+`
 
 const RightSidebar = styled.div`
   width: 20%;
@@ -49,7 +49,7 @@ const RightSidebar = styled.div`
   flex-direction: column;
   justify-content: space-between;
   height: 100vh; /* Set height to 100% of viewport height */
-`;
+`
 
 const SidebarLeft = styled.div`
   width: 20%;
@@ -58,7 +58,7 @@ const SidebarLeft = styled.div`
   flex-direction: column;
   justify-content: space-between;
   height: 100vh; /* Set height to 100% of viewport height */
-`;
+`
 
 const SimpleControl = styled.div`
   height: calc(100% / 6);
@@ -71,12 +71,12 @@ const SimpleControl = styled.div`
   &:hover {
     cursor: pointer;
   }
-`;
+`
 
 const ResultArrow = styled.div`
   font-size: 2vw;
   margin: 2vw;
-`;
+`
 
 const SplitControl = styled.div`
   height: calc(100% / 6);
@@ -85,36 +85,36 @@ const SplitControl = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
+`
 
 interface EditorProps {
-    bits: Digit[],
+  bits: Digit[]
 }
 
-const Editor: FC<EditorProps> = ({bits}) => {
-    const inBits: Digit[] = bits;
-    const [binOp, setbinOp] = useState(Op.NOOP);
-    const [constOperand, setConstOperand] = useState<Digit[]|null>(null);
-    const [outBits, setOutBits] = useState(inBits);
+const Editor: FC<EditorProps> = ({ bits }) => {
+  const inBits: Digit[] = bits
+  const [binOp, setbinOp] = useState(Op.NOOP)
+  const [constOperand, setConstOperand] = useState<Digit[] | null>(null)
+  const [outBits, setOutBits] = useState(inBits)
 
-    console.log("[DEBUG] current inBits:", outBits);
-    console.log("[DEBUG] current binary operation:", binOp);
-    console.log("[DEBUG] current operand:", constOperand);
-    console.log("[DEBUG] current outBits:", outBits);
+  console.log('[DEBUG] current inBits:', outBits)
+  console.log('[DEBUG] current binary operation:', binOp)
+  console.log('[DEBUG] current operand:', constOperand)
+  console.log('[DEBUG] current outBits:', outBits)
 
-    // re-compute the output of the computational frame
-    useEffect(() => {
-        console.debug("[DEBUG]: useEffect: EVAL_EXPR", inBits, binOp, constOperand);
-        setOutBits(evalExpr(inBits, constOperand, binOp));
-    }, [inBits, binOp, constOperand]);
+  // re-compute the output of the computational frame
+  useEffect(() => {
+    console.debug('[DEBUG]: useEffect: EVAL_EXPR', inBits, binOp, constOperand)
+    setOutBits(evalExpr(inBits, constOperand, binOp))
+  }, [inBits, binOp, constOperand])
 
-    let binOpActive = binOp === Op.AND
-                    || binOp === Op.OR
-                    || binOp === Op.XOR
-                    || binOp === Op.SHIFTR
-                    || binOp === Op.SHIFTL;
+  const binOpActive = binOp === Op.AND ||
+                    binOp === Op.OR ||
+                    binOp === Op.XOR ||
+                    binOp === Op.SHIFTR ||
+                    binOp === Op.SHIFTL
 
-    return (
+  return (
         <DndProvider backend={HTML5Backend}>
             <EditorWrapper>
             <SidebarLeft>
@@ -131,17 +131,17 @@ const Editor: FC<EditorProps> = ({bits}) => {
             </EditorContent>
             <RightSidebar>
                 <SplitControl>
-                    <ConstControl name={"1"} setConstOperand={setConstOperand} operand={ONE} /> OR
-                    <ConstControl name={"0"} setConstOperand={setConstOperand} operand={ZERO} />
+                    <ConstControl name={'1'} setConstOperand={setConstOperand} operand={ONE} /> OR
+                    <ConstControl name={'0'} setConstOperand={setConstOperand} operand={ZERO} />
                 </SplitControl>
-                <Control name={"AND (&)"} setbinOp={setbinOp} op={Op.AND} />
-                <Control name={"OR  (|)"} setbinOp={setbinOp} op={Op.OR} />
-                <Control name={"XOR (^)"} setbinOp={setbinOp} op={Op.XOR} />
-                <Control name={"NOT (~)"} setbinOp={setbinOp} op={Op.NOT} />
+                <Control name={'AND (&)'} setbinOp={setbinOp} op={Op.AND} />
+                <Control name={'OR  (|)'} setbinOp={setbinOp} op={Op.OR} />
+                <Control name={'XOR (^)'} setbinOp={setbinOp} op={Op.XOR} />
+                <Control name={'NOT (~)'} setbinOp={setbinOp} op={Op.NOT} />
             </RightSidebar>
             </EditorWrapper>
         </DndProvider>
-    );
-};
+  )
+}
 
-export default Editor;
+export default Editor

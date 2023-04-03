@@ -1,8 +1,8 @@
-import { FC } from 'react';
-import styled from 'styled-components';
+import { type FC } from 'react'
+import styled from 'styled-components'
 import { useDrag } from 'react-dnd'
 
-import { OpType, Op, Digit, digitsToInt } from './Common';
+import { OpType, type Op, type Digit, digitsToInt } from './Common'
 
 const StyledControl = styled.div`
   height: calc(100% / 4.8);
@@ -15,7 +15,7 @@ const StyledControl = styled.div`
   &:hover {
     cursor: pointer;
   }
-`;
+`
 
 const StyledSplitControl = styled.div`
   padding: 1vw;
@@ -30,69 +30,69 @@ const StyledSplitControl = styled.div`
   &:hover {
     cursor: pointer;
   }
-`;
+`
 
 export interface ControlProps {
-  name: string,
-  setbinOp: (op: Op) => void,
-  op: Op,
+  name: string
+  setbinOp: (op: Op) => void
+  op: Op
 }
 
 interface DropResult {
   name: string
 }
 
-export const Control: FC<ControlProps> = function Control({ name, setbinOp, op }) {
+export const Control: FC<ControlProps> = function Control ({ name, setbinOp, op }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: OpType.BIN_OPERATION,
     item: { name, op },
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult<DropResult>()
-      if (item.op && dropResult) {
-        setbinOp(op);
+      if (item.op && (dropResult != null)) {
+        setbinOp(op)
       }
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
-      handlerId: monitor.getHandlerId(),
-    }),
+      handlerId: monitor.getHandlerId()
+    })
   }))
 
   const opacity = isDragging ? 0.4 : 1
   return (
-    <StyledControl ref={drag} style={{ opacity }} data-testid={`Control`}>
+    <StyledControl ref={drag} style={{ opacity }} data-testid={'Control'}>
       {name}
     </StyledControl>
   )
 }
 
 export interface ConstControlProps {
-  name: string,
-  setConstOperand: (operand: Digit[]) => void,
-  operand: Digit[],
+  name: string
+  setConstOperand: (operand: Digit[]) => void
+  operand: Digit[]
 }
 
-export const ConstControl: FC<ConstControlProps> = function ConstControl({ name, setConstOperand, operand }) {
+export const ConstControl: FC<ConstControlProps> = function ConstControl ({ name, setConstOperand, operand }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: OpType.CONST_OPERATION,
     item: { name, operand },
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult<DropResult>()
-      if ((digitsToInt(item.operand) === 1
-         || digitsToInt(item.operand) === 0) && dropResult) {
-        console.log("dropped", item.operand)
-        setConstOperand(item.operand);
+      if ((digitsToInt(item.operand) === 1 ||
+         digitsToInt(item.operand) === 0) && (dropResult != null)) {
+        console.log('dropped', item.operand)
+        setConstOperand(item.operand)
       }
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
-      handlerId: monitor.getHandlerId(),
-    }),
+      handlerId: monitor.getHandlerId()
+    })
   }))
 
   const opacity = isDragging ? 0.4 : 1
   return (
-    <StyledSplitControl ref={drag} style={{ opacity }} data-testid={`StyledSplitControl`}>
+    <StyledSplitControl ref={drag} style={{ opacity }} data-testid={'StyledSplitControl'}>
       {name}
     </StyledSplitControl>
   )

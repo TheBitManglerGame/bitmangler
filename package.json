@@ -2,9 +2,9 @@
   "name": "bitmangler",
   "version": "0.1.0",
   "private": true,
-  "engines" : {
-    "npm" : ">=9.5.0",
-    "node" : ">=18.15.0"
+  "engines": {
+    "npm": ">=9.5.0",
+    "node": ">=18.15.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.4.0",
@@ -24,20 +24,15 @@
     "react-router-dom": "^6.10.0",
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.9",
-    "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "test": "jest"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "test": "jest",
+    "lint": "eslint src",
+    "lint:fix": "npm run lint --fix"
   },
   "browserslist": {
     "production": [
@@ -54,8 +49,16 @@
   "devDependencies": {
     "@types/jest": "29.5.0",
     "@types/styled-components": "^5.1.26",
+    "@typescript-eslint/eslint-plugin": "^5.57.0",
+    "eslint": "^8.37.0",
+    "eslint-config-standard-with-typescript": "^34.0.1",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.32.2",
     "jest": "29.5.0",
     "jest-environment-jsdom": "29.5.0",
-    "ts-jest": "29.1.0"
+    "ts-jest": "29.1.0",
+    "typescript": "^5.0.3"
   }
 }
