@@ -10,7 +10,7 @@ import { Operation } from "./Operation";
 import { ConstControl, Control } from "./Control";
 import { Digit, Op, ONE, ZERO, OperandState, digitsToInt, isBinOp, intToDigits, print8LSB, digitsFromUrlParam } from "./Common";
 import { ConstOperand } from "./Const";
-import { evalExpr } from './Eval';
+import { evalExpr, evalShift } from './Eval';
 import { Expr, ExprType, ShiftDirection, BinOperation, ShiftVal, prettyPrint, evaluate, VALUE_EXPR } from './AST';
 import { Modal, ModalContent, ModalButton } from './Modal';
 
@@ -203,7 +203,7 @@ function ExprToUIstate(expr: Expr): { op: Op, operand1: OperandState, operand2: 
           bits = intToDigits(e.value);
       }
 
-      return { originalBits: bits, bits, shift };
+      return { originalBits: bits, bits: evalShift(bits, shift), shift };
   };
 
   if (expr.exprType === ExprType.BinApp) {
@@ -311,9 +311,12 @@ const Editor: FC<EditorProps> = ({bits, targetBits}) => {
         setCurrentFrameIndex(currentFrameIndex - 1);
 
         // Restore the UI state from the previous frame
-        const prevState = ExprToUIstate(updatedFrames[index - 1]);
+        const prevExpr = updatedFrames[index - 1];
+        const prevState = ExprToUIstate(prevExpr);
         setInBitsState(prevState.operand1);
         setbinOp(prevState.op);
+        console.log("____", intToDigits(evaluate(prevExpr)));
+        setOutBits(intToDigits(evaluate(prevExpr)));
 
         if (prevState.operand2) {
           setConstOperandState(prevState.operand2);
