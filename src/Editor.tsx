@@ -315,7 +315,6 @@ const Editor: FC<EditorProps> = ({bits, targetBits}) => {
         const prevState = ExprToUIstate(prevExpr);
         setInBitsState(prevState.operand1);
         setbinOp(prevState.op);
-        console.log("____", intToDigits(evaluate(prevExpr)));
         setOutBits(intToDigits(evaluate(prevExpr)));
 
         if (prevState.operand2) {
