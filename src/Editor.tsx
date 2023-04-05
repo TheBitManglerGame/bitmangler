@@ -224,8 +224,13 @@ function ExprToUIstate(expr: Expr): { op: Op, operand1: OperandState, operand2: 
       const operand1 = extractOperandState(expr);
 
       return { op, operand1, operand2: null };
+  } else if (expr.exprType === ExprType.Shift) {
+      const op = Op.NOOP;
+      const operand1 = extractOperandState(expr);
+
+      return { op, operand1, operand2: null };
   } else {
-      throw new Error('Invalid expression type');
+      throw new Error('ExprToUIstate: Invalid expression type');
   }
 }
 
