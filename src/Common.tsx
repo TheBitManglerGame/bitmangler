@@ -1,3 +1,5 @@
+/* Various helpers and types used in UI */
+
 export const enum OpType {
     BIN_OPERATION = 'BinaryOperation',
     CONST_OPERATION = 'ConstOperation',
@@ -9,6 +11,17 @@ export const enum Op {
     AND = "AND",
     NOT = "NOT",
     NOOP = "NOOP",
+}
+
+export function isBinOp(op: Op): boolean {
+  switch (op) {
+      case Op.AND:
+      case Op.OR:
+      case Op.XOR:
+          return true;
+      default:
+          return false;
+  }
 }
 
 export enum ShiftDir { LEFT = 'LEFT', RIGHT ='RIGHT' };
@@ -33,6 +46,10 @@ export function intToDigits(num:number): Digit[] {
 export function digitsToInt(inBits: Digit[]) {
   assert(inBits.length === 8, 'Input array must have exactly 8 elements');
     return Number.parseInt(inBits.join(''), 2);
+}
+
+export function print8LSB(input: number): string {
+  return input.toString(2).slice(-8).padStart(8, '0');
 }
 
 export const ONE: Digit[]  = intToDigits(1);

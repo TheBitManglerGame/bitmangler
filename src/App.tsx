@@ -9,7 +9,7 @@ const App: React.FC = () => {
       <Routes>
         <Route index element={<HomePage />} />
         <Route path="/about" element={<About />} />
-        <Route path="/editor" element={<Editor bits={[0,0,0,0,0,0,0,1]} />} />
+        <Route path="/editor" element={<Editor bits={[0,0,0,0,0,0,0,1]} targetBits={[1,1,0,0,0,0,1,0]} />} />
       </Routes>
   </Router>
   );
