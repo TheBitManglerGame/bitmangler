@@ -48,6 +48,13 @@ export function digitsToInt(inBits: Digit[]) {
     return Number.parseInt(inBits.join(''), 2);
 }
 
+export function digitsFromUrlParam(paramValue: string): Digit[] {
+  assert(paramValue.length === 8, 'bits input must have exactly 8 elements');
+  const res = paramValue.split('').map(x => parseInt(x, 10));
+  assert(res.every(n => n === 1 || n === 0));
+  return res as Digit[];
+}
+
 export function print8LSB(input: number): string {
   return input.toString(2).slice(-8).padStart(8, '0');
 }
