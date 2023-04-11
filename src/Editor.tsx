@@ -8,9 +8,9 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import { BinaryPanel } from "./BinaryPanel";
 import { Operation } from "./Operation";
 import { ConstControl, Control } from "./Control";
-import { Digit, Op, ONE, ZERO, OperandState, digitsToInt, isBinOp, intToDigits, print8LSB } from "./Common";
+import { Digit, Op, ONE, ZERO, OperandState, digitsToInt, isBinOp, intToDigits, print8LSB, digitsFromUrlParam } from "./Common";
 import { ConstOperand } from "./Const";
-import { evalExpr } from './Eval';
+import { evalExpr, evalShift } from './Eval';
 import { Expr, ExprType, ShiftDirection, BinOperation, ShiftVal, prettyPrint, evaluate, VALUE_EXPR } from './AST';
 import { Modal, ModalContent, ModalButton } from './Modal';
 
@@ -203,7 +203,7 @@ function ExprToUIstate(expr: Expr): { op: Op, operand1: OperandState, operand2: 
           bits = intToDigits(e.value);
       }
 
-      return { originalBits: bits, bits, shift };
+      return { originalBits: bits, bits: evalShift(bits, shift), shift };
   };
 
   if (expr.exprType === ExprType.BinApp) {
@@ -224,14 +224,38 @@ function ExprToUIstate(expr: Expr): { op: Op, operand1: OperandState, operand2: 
       const operand1 = extractOperandState(expr);
 
       return { op, operand1, operand2: null };
+  } else if (expr.exprType === ExprType.Shift) {
+      const op = Op.NOOP;
+      const operand1 = extractOperandState(expr);
+
+      return { op, operand1, operand2: null };
   } else {
-      throw new Error('Invalid expression type');
+      throw new Error('ExprToUIstate: Invalid expression type');
   }
 }
 
+function getBitQueryParams(): {bits: Digit[], targetBits: Digit[] } {
+  const searchParams: URLSearchParams = new URLSearchParams(window.location.search);
+
+  if (!searchParams.get("bits")) {
+    console.warn("[WARN] 'bits' url parameter is not set");
+  }
+
+  if (!searchParams.get("target")) {
+    console.warn("[WARN] 'targetBits' url parameter is not set");
+  }
+
+  return { bits: digitsFromUrlParam(searchParams.get("bits") || "00000000")
+         , targetBits: digitsFromUrlParam(searchParams.get("target") || "00000001")
+         };
+}
 
 const Editor: FC<EditorProps> = ({bits, targetBits}) => {
-    const [inBitsState, setInBitsState] = useState<OperandState>({originalBits: bits, bits, shift: 0});
+    const { bits: initialBits, targetBits: initialTargetBits } = getBitQueryParams();
+    bits = initialBits || bits;
+    targetBits = initialTargetBits || targetBits;
+
+    const [inBitsState, setInBitsState] = useState<OperandState>({originalBits: initialBits, bits: initialBits, shift: 0});
     const [constOperandState, setConstOperandState] = useState<OperandState>({originalBits: ONE, bits: ONE, shift: 0});
     const [binOp, setbinOp] = useState(Op.NOOP);
     const [outBits, setOutBits] = useState<Digit[]>(inBitsState.bits);
@@ -241,11 +265,11 @@ const Editor: FC<EditorProps> = ({bits, targetBits}) => {
 
     const binOpActive = binOp === Op.AND || binOp === Op.OR || binOp === Op.XOR;
 
-    console.log("[DEBUG] ===== CURRENT STATE =====");
-    console.log("[DEBUG] current inBits:", inBitsState);
-    console.log("[DEBUG] current binary operation:", binOp);
-    console.log("[DEBUG] current operand:", constOperandState);
-    console.log("[DEBUG] current outBits:", outBits);
+    // console.log("[DEBUG] ===== CURRENT STATE =====");
+    // console.log("[DEBUG] current inBits:", inBitsState);
+    // console.log("[DEBUG] current binary operation:", binOp);
+    // console.log("[DEBUG] current operand:", constOperandState);
+    // console.log("[DEBUG] current outBits:", outBits);
 
     // re-evaluate frame
     useEffect(() => {
@@ -269,6 +293,7 @@ const Editor: FC<EditorProps> = ({bits, targetBits}) => {
 
     // in case we want to restart
     const resetEditor = () => {
+      console.debug("[DEBUG]: RESET_EDITOR");
         setInBitsState({ originalBits: bits, bits, shift: 0 });
         setConstOperandState({ originalBits: ONE, bits: ONE, shift: 0 });
         setbinOp(Op.NOOP);
@@ -279,15 +304,18 @@ const Editor: FC<EditorProps> = ({bits, targetBits}) => {
     };
 
     const dropLastFrame = () => {
+      console.debug("[DEBUG]: DROP_LAST_FRAME");
         let index = evaluationFrames.length - 1;
         const updatedFrames = evaluationFrames.slice(0, index);
         setEvaluationFrames(updatedFrames);
         setCurrentFrameIndex(currentFrameIndex - 1);
 
         // Restore the UI state from the previous frame
-        const prevState = ExprToUIstate(updatedFrames[index - 1]);
+        const prevExpr = updatedFrames[index - 1];
+        const prevState = ExprToUIstate(prevExpr);
         setInBitsState(prevState.operand1);
         setbinOp(prevState.op);
+        setOutBits(intToDigits(evaluate(prevExpr)));
 
         if (prevState.operand2) {
           setConstOperandState(prevState.operand2);
