@@ -33,7 +33,30 @@ export function renderDirection(dir: ShiftDir) {
 
 export type Digit = 0 | 1;
 
-function assert(condition: boolean, message?: string): asserts condition {
+// TODO: try this?
+// export type Byte = [Digit, Digit, Digit, Digit, Digit, Digit, Digit, Digit];
+
+export function genRandomTargetDest(): [Digit[], Digit[]] {
+    let target: Digit[] = [];
+    let dest: Digit[] = [];
+
+    do {
+        target = generateRandomArray();
+        dest = generateRandomArray();
+    } while (areArraysEqual(target, dest));
+
+    return [target, dest];
+}
+
+function generateRandomArray(): Digit[] {
+    return Array.from({ length: 8 }, () => (Math.random() > 0.5 ? 1 : 0) as Digit);
+}
+
+function areArraysEqual(a: Digit[], b: Digit[]): boolean {
+    return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
+export function assert(condition: boolean, message?: string): asserts condition {
   if (!condition) {
     throw new Error(message || 'Assertion failed');
   }
@@ -48,7 +71,8 @@ export function digitsToInt(inBits: Digit[]) {
     return Number.parseInt(inBits.join(''), 2);
 }
 
-export function digitsFromUrlParam(paramValue: string): Digit[] {
+export function digitsFromUrlParam(paramValue: string | null): Digit[] | null {
+  if (paramValue === null) return null;
   assert(paramValue.length === 8, 'bits input must have exactly 8 elements');
   const res = paramValue.split('').map(x => parseInt(x, 10));
   assert(res.every(n => n === 1 || n === 0));
@@ -67,3 +91,4 @@ export interface OperandState {
   bits: Digit[];
   shift: number;
 }
+
