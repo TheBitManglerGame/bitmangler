@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 
-export const Modal = styled.div`
+import { Expr, exprScore, prettyPrint } from './AST';
+import { Code, CodeContent } from './Code';
+
+const StyledModal = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -13,8 +16,8 @@ export const Modal = styled.div`
   z-index: 1000;
 `;
 
-export const ModalContent = styled.div`
-  background-color: #fff;
+const ModalContent = styled.div`
+  background-color: #FDFDFD;
   padding: 2rem;
   border-radius: 5px;
   display: flex;
@@ -22,7 +25,7 @@ export const ModalContent = styled.div`
   align-items: center;
 `;
 
-export const ModalButton = styled.button`
+const ModalButton = styled.button`
   padding: 10px 20px;
   margin: 10px;
   background-color: #007bff;
@@ -32,3 +35,36 @@ export const ModalButton = styled.button`
   cursor: pointer;
   font-size: 1rem;
 `;
+
+interface ModalProps {
+  onRetryClick: () => void,
+  onNewGameClick: () => void,
+  resultExpr: Expr,
+  bitBotExpr: Expr,
+}
+
+export const GameSummaryModal: React.FC<ModalProps> = ({onRetryClick, onNewGameClick, resultExpr, bitBotExpr, }) => {
+
+  return (
+    <StyledModal>
+      <ModalContent>
+        <h2>Congratulations! You've reached the target!</h2>
+        <p>Final solution:</p>
+        <Code>
+          <CodeContent>{prettyPrint(resultExpr)}</CodeContent>
+        </Code>
+        <p>Score: {exprScore(resultExpr)} </p>
+        <img src="/mrbitbot.png" alt="mrbitbot" style={{ width: '100%', maxWidth: '300px', margin: '10px'}} />
+        <p>Mr. Bitbot provided this solution:</p>
+        <Code>
+          <CodeContent>{prettyPrint(bitBotExpr!)}</CodeContent>
+        </Code>
+        <p>Mr. Bitbot Score: {exprScore(bitBotExpr!)} </p>
+        <div>
+            <ModalButton onClick={onRetryClick}>Retry</ModalButton>
+            <ModalButton onClick={onNewGameClick}>New game</ModalButton>
+        </div>
+      </ModalContent>
+    </StyledModal>
+  )
+}
