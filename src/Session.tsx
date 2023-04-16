@@ -4,7 +4,7 @@ import Editor from './Editor'
 import { type Digit, digitsFromUrlParam, genRandomTargetDest } from './Common'
 import { solve } from './Solver'
 import { useNavigate } from 'react-router-dom'
-import { type Expr } from './AST'
+import { type Expr } from './Expr'
 
 function getBitQueryParams (): { bits: Digit[] | null, targetBits: Digit[] | null } {
   const searchParams: URLSearchParams = new URLSearchParams(window.location.search)

@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { Fragment } from 'react'
-import { type Expr, prettyPrint, evaluate } from './AST'
+import { type Expr, prettyPrint, evaluate } from './Expr'
 import { print8LSB } from './Common'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 

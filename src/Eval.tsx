@@ -2,18 +2,18 @@ import { type Digit, digitsToInt, Op, intToDigits } from './Common'
 
 export function evalExpr (inBits: Digit[], constOperand: Digit[] | null, op: Op): Digit[] {
   if (op === Op.NOOP) {
-    console.debug('[DEBUG]: eval: NOOP, returning inBits')
+    // console.debug('[DEBUG]: eval: NOOP, returning inBits')
     return inBits
   }
 
   if (op === Op.NOT) {
     const an = digitsToInt(inBits)
-    console.debug('[DEBUG]: eval NOT: result: ', an)
+    // console.debug('[DEBUG]: eval NOT: result: ', an)
     return (~an >>> 0).toString(2).slice(-8).padStart(8, '0').split('').map(n => parseInt(n) as Digit)
   }
 
   if (constOperand === null) {
-    console.debug('[DEBUG] eval: Const operand not present, returning inBits', inBits)
+    // console.debug('[DEBUG] eval: Const operand not present, returning inBits', inBits)
     return inBits
   }
 
@@ -29,7 +29,7 @@ export function evalExpr (inBits: Digit[], constOperand: Digit[] | null, op: Op)
       res = []
     }
   }
-  console.debug('[DEBUG]: eval: result: ', res)
+  // console.debug('[DEBUG]: eval: result: ', res)
   return res
 }
 export function evalShift (bits: Digit[], shiftAmount: number): Digit[] {
@@ -41,10 +41,10 @@ export function evalShift (bits: Digit[], shiftAmount: number): Digit[] {
   const absShiftAmount = Math.abs(shiftAmount)
 
   if (isLeftShift) {
-    console.debug('[DEBUG] evalShift: LEFT', bits, shiftAmount)
+    // console.debug('[DEBUG] evalShift: LEFT', bits, shiftAmount)
     return [...bits.slice(absShiftAmount), ...Array(absShiftAmount).fill(0)]
   } else {
-    console.debug('[DEBUG] evalShift: RIGHT', bits, shiftAmount)
+    // console.debug('[DEBUG] evalShift: RIGHT', bits, shiftAmount)
     return [...Array(absShiftAmount).fill(0), ...bits.slice(0, 8 - absShiftAmount)]
   }
 }

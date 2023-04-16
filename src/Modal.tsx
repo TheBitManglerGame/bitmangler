@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { type Expr, exprScore, prettyPrint } from './AST'
+import { type Expr, exprScore, prettyPrint } from './Expr'
 import { Code, CodeContent } from './Code'
 
 const StyledModal = styled.div`

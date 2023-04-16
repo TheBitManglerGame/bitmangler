@@ -11,7 +11,7 @@ import { ConstControl, Control } from './Control'
 import { type Digit, Op, ONE, ZERO, type OperandState, digitsToInt, intToDigits, isBinOp } from './Common'
 import { ConstOperand } from './Const'
 import { evalExpr, evalShift } from './Eval'
-import { type Expr, ExprType, evaluate, VALUE_EXPR, BIN_APP_EXPR, BinOperation, NOT_EXPR, SHIFT_EXPR, ShiftDirection, unwindStackToExpr, ZERO_EXPR_VAL } from './AST'
+import { type Expr, ExprType, evaluate, VALUE_EXPR, BIN_APP_EXPR, BinOperation, NOT_EXPR, SHIFT_EXPR, ShiftDirection, unwindStackToExpr, ZERO_EXPR_VAL } from './Expr'
 import { GameSummaryModal } from './Modal'
 import { EvalStack, TargetDisplay } from './EvalStack'
 
