@@ -1,8 +1,10 @@
 name: GitHub Actions Demo
 run-name: Automated tests
-# Run on pull requests and pushes
+# Run on pull requests and pushes to main only
 on:
   push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -22,3 +24,4 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm test
+      # - run: npm run lint
