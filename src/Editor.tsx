@@ -200,7 +200,7 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
   const [targetReached, setTargetReached] = useState<boolean>(false)
   const binOpActive = binOp === Op.AND || binOp === Op.OR || binOp === Op.XOR
 
-  console.debug('[DEBUG] Editor:render')
+  // console.debug('[DEBUG] Editor:render')
 
   // re-evaluate frame
   useEffect(() => {
