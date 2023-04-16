@@ -1,10 +1,10 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
-import { faTimes } from "@fortawesome/free-solid-svg-icons"
-import { Fragment } from "react"
-import { Expr, prettyPrint, evaluate } from "./AST"
-import { print8LSB } from "./Common"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { Fragment } from 'react'
+import { type Expr, prettyPrint, evaluate } from './AST'
+import { print8LSB } from './Common'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const FrameDisplay = styled.div`
     padding: 1rem;
@@ -17,10 +17,10 @@ const FrameDisplay = styled.div`
     align-items: center;
     overflow: visible;
     position: relative;
-`;
+`
 
 const StyledEvalStack = styled.div`
-`;
+`
 
 export const TargetDisplay = styled(FrameDisplay)`
   margin-top: 5em;
@@ -29,7 +29,7 @@ export const TargetDisplay = styled(FrameDisplay)`
   bottom: 0;
   border: 3px solid #2696fc;
   background-color: #badeff;
-`;
+`
 
 const Arrow = styled.div`
     width: 10px;
@@ -38,7 +38,7 @@ const Arrow = styled.div`
     border-right: 4px solid #32CD32;
     transform: rotate(135deg);
     margin: 0.5rem auto;
-`;
+`
 
 const CloseIcon = styled(FontAwesomeIcon)`
   position: absolute;
@@ -47,15 +47,15 @@ const CloseIcon = styled(FontAwesomeIcon)`
   cursor: pointer;
   font-size: 1.2rem;
   z-index: 1;
-`;
+`
 
 interface EvalStackProps {
-    frames: Expr[];
-    onDropLast: () => void;
+  frames: Expr[]
+  onDropLast: () => void
 }
 
-export const EvalStack: React.FC<EvalStackProps> = ({frames, onDropLast}) => {
-    return (
+export const EvalStack: React.FC<EvalStackProps> = ({ frames, onDropLast }) => {
+  return (
         <StyledEvalStack>
             {frames.map((frame, index) => (
                 <Fragment key={index}>
@@ -63,11 +63,11 @@ export const EvalStack: React.FC<EvalStackProps> = ({frames, onDropLast}) => {
                         {index !== 0 && index === frames.length - 1 && (
                         <CloseIcon icon={faTimes} onClick={onDropLast} />
                         )}
-                        <pre>{`${prettyPrint(frame)} ${index === 0 ? "" : "=> " + print8LSB(evaluate(frame))}`}</pre>
+                        <pre>{`${prettyPrint(frame)} ${index === 0 ? '' : '=> ' + print8LSB(evaluate(frame))}`}</pre>
                     </FrameDisplay>
                     {index < frames.length - 1 && <Arrow />}
                 </Fragment>
             ))}
         </StyledEvalStack>
-    );
+  )
 }
