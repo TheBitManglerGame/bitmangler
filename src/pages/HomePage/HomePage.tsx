@@ -1,14 +1,14 @@
-import React from 'react';
-import { useNavigate } from "react-router-dom";
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const HomePage: React.FC = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const navigateToAbout = () => {
-    navigate("/about");
+  const navigateToAbout = (): void => {
+    navigate('/about')
   }
-  const navigateToEditor = () => {
-    navigate("/editor");
+  const navigateToEditor = (): void => {
+    navigate('/editor')
   }
   return (
     <div>
@@ -18,7 +18,7 @@ const HomePage: React.FC = () => {
       <br/>
       <button onClick={navigateToEditor} type="button"> Editor </button>
     </div>
-  );
-};
+  )
+}
 
-export default HomePage;
+export default HomePage
