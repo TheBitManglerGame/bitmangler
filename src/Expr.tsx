@@ -86,56 +86,6 @@ function shiftDirectionToString (shiftDirection: ShiftDirection): string {
   }
 }
 
-export function serializeToJS (expr: Expr): string {
-  switch (expr.exprType) {
-    case ExprType.BinApp: {
-      const op = binOpToJSOperator(expr.binOp)
-      const left = serializeToJS(expr.expr1)
-      const right = serializeToJS(expr.expr2)
-      return `(${left} ${op} ${right})`
-    }
-    case ExprType.Not: {
-      const notExpr = serializeToJS(expr.expr)
-      return `(~${notExpr})`
-    }
-    case ExprType.Shift: {
-      const shiftExpr = serializeToJS(expr.expr)
-      const direction = shiftDirectionToJSOperator(expr.dir)
-      const shiftVal = expr.shiftVal
-      return `(${shiftExpr} ${direction} ${shiftVal})`
-    }
-    case ExprType.Value: {
-      return expr.value.toString()
-    }
-    default:
-      throw new Error('Invalid expression type')
-  }
-}
-
-function binOpToJSOperator (binOp: BinOperation): string {
-  switch (binOp) {
-    case BinOperation.AND:
-      return '&'
-    case BinOperation.OR:
-      return '|'
-    case BinOperation.XOR:
-      return '^'
-    default:
-      throw new Error('Invalid binary operation')
-  }
-}
-
-function shiftDirectionToJSOperator (shiftDirection: ShiftDirection): string {
-  switch (shiftDirection) {
-    case ShiftDirection.ShiftLeft:
-      return '<<'
-    case ShiftDirection.ShiftRight:
-      return '>>'
-    default:
-      throw new Error('Invalid shift direction')
-  }
-}
-
 export function evaluate (expr: Expr): number {
   function toByte (value: number): number {
     const x = value & 0xFF
@@ -267,6 +217,8 @@ export function exprScore (e: Expr): number {
 export function unwindStackToExpr (evaluationFrames: Expr[]): Expr {
   // Deep copy the frames array to avoid mutating argument
   const copiedFrames = JSON.parse(JSON.stringify(evaluationFrames))
+
+  if (evaluationFrames.length === 1) return evaluationFrames[0]
 
   if (copiedFrames.length === 0) return ZERO_EXPR_VAL
   let i = 1 // bottom value is constant value of "inBits" so just start with next interesting frame
