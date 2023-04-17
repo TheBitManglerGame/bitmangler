@@ -1,5 +1,7 @@
 /* Various helpers and types used in UI */
 
+import { type FlattenSimpleInterpolation, css, keyframes } from 'styled-components'
+
 export const enum OpType {
   BIN_OPERATION = 'BinaryOperation',
   CONST_OPERATION = 'ConstOperation',
@@ -91,4 +93,26 @@ export interface OperandState {
   originalBits: Digit[]
   bits: Digit[]
   shift: number
+}
+
+export const borderAnimation = keyframes`
+  0% {
+    border-color: #ddd;
+  }
+  50% {
+    border-color: #aaa;
+  }
+  100% {
+    border-color: #ddd;
+  }
+`
+export const canDropStyles = (canDrop: boolean): FlattenSimpleInterpolation => {
+  return canDrop
+    ? css`
+        background-color: white;
+        color: rgba(0, 0, 0, 0.4);
+        animation: ${borderAnimation} 2s linear infinite;
+        border-color: #ddd;
+      `
+    : css``
 }

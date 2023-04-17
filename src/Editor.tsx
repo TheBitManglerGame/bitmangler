@@ -2,35 +2,66 @@ import { type FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons'
-import { DndProvider } from 'react-dnd'
+import { DndProvider, useDrop } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 
 import { BinaryPanel } from './BinaryPanel'
 import { Operation } from './Operation'
 import { ConstControl, Control } from './Control'
-import { type Digit, Op, ONE, ZERO, type OperandState, digitsToInt, intToDigits, isBinOp } from './Common'
+import { type Digit, Op, ONE, ZERO, type OperandState, digitsToInt, intToDigits, isBinOp, OpType } from './Common'
 import { ConstOperand } from './Const'
 import { evalExpr, evalShift } from './Eval'
 import { type Expr, ExprType, evaluate, VALUE_EXPR, BIN_APP_EXPR, BinOperation, NOT_EXPR, SHIFT_EXPR, ShiftDirection, unwindStackToExpr, ZERO_EXPR_VAL } from './Expr'
 import { GameSummaryModal } from './Modal'
 import { EvalStack, TargetDisplay } from './EvalStack'
 import { LeftSidebar, SimpleControl, ResultArrow, SubmitButton, RightSidebar, SplitControl } from './RandomUI'
+import React from 'react'
 
 const EditorWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  height: 100vh;
 `
 
-const EditorContent = styled.div`
+const StyledEditorContent = styled.div`
+  flex: 1;
   width: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
   margin-top: 2.5vw;
   margin-bottom: 20px;
+  min-height: 100vh;
 `
+
+interface EditorContentProps {
+  children: React.ReactNode
+}
+
+const EditorContent: React.FC<EditorContentProps> = ({ children }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [{ canDrop }, drop] = useDrop(() => ({
+    accept: OpType.BIN_OPERATION,
+    drop: () => {},
+    collect: (monitor) => ({
+      canDrop: monitor.canDrop()
+    })
+  }))
+
+  const enhancedChildren = React.Children.map(children, (child) => {
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child, { ...child.props, canDrop })
+    }
+    return child
+  })
+
+  return (
+    <StyledEditorContent ref={drop}>
+      {enhancedChildren}
+    </StyledEditorContent>
+  )
+}
 
 interface EditorProps {
   bits: Digit[]
@@ -212,7 +243,7 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
             </LeftSidebar>
             <EditorContent>
                 <BinaryPanel fontColor="black" operandState={inBitsState} setOperandState={setInBitsState} />
-                <Operation content={binOp} />
+                <Operation op={binOp} canDrop={false} />
                 { binOpActive && <ConstOperand operandState={constOperandState} setOperandState={setConstOperandState} /> }
                 <ResultArrow> <FontAwesomeIcon icon={faArrowDown} color="#e2e0df"/> </ResultArrow>
                 <BinaryPanel fontColor="#e2e0df" operandState={{ originalBits: outBits, bits: outBits, shift: 0 }} />
