@@ -1,7 +1,7 @@
-import { BIN_APP_EXPR, BinOperation, type Expr, ExprType, NOT_EXPR, ONE_EXPR_VAL, SHIFT_EXPR, VALUE_EXPR, ZERO_EXPR_VAL, evaluate, prettyPrint } from './AST'
+import { BIN_APP_EXPR, BinOperation, type Expr, ExprType, NOT_EXPR, ONE_EXPR_VAL, SHIFT_EXPR, VALUE_EXPR, ZERO_EXPR_VAL, evaluate, prettyPrint } from './Expr'
 import { type Digit, digitsToInt, intToDigits, assert } from './Common'
 
-const TICK_LIMIT: number = 5000
+export const TICK_LIMIT: number = 5000
 
 function isOperationResultKnown (binOp: BinOperation, shiftedExpr: Expr, shiftedOperandExpr: Expr): boolean {
   const e1 = evaluate(shiftedExpr)
