@@ -12,9 +12,13 @@ const StyledControl = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.3s ease;
 
   &:hover {
     cursor: pointer;
+    background-color: #e0e0e0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
   }
 `
 
@@ -27,9 +31,13 @@ const StyledSplitControl = styled.div`
   align-items: center;
   width: calc(100% / 2);
   height: calc(100% / 2);
+  transition: all 0.3s ease;
 
   &:hover {
     cursor: pointer;
+    border: 2px solid #aaa;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
   }
 `
 
@@ -106,9 +114,12 @@ export const ConstControl: FC<ConstControlProps> = function ConstControl ({ name
 const StyledShiftControl = styled.div`
   font-size: 1.5vw;
   opacity: 0.4;
+  transition: all 0.3s ease;
 
   &:hover {
     cursor: pointer;
+    opacity: 1;
+    transform: scale(1.1);
   }
 `
 
