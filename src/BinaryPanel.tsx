@@ -26,11 +26,30 @@ const StyledBinaryDigit = styled.div<{ canDrop: boolean }>`
 
 export const StyledBinaryPanel = styled.div<{ fontColor: string }>`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  width 70%;
+  width 90%;
   margin: 1vw;
   color: ${props => props.fontColor};
+`
+
+const BitsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+`
+
+const LeftWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+`
+
+const RightWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
 `
 
 interface BinaryPanelProps {
@@ -38,6 +57,7 @@ interface BinaryPanelProps {
   operandState: OperandState
   setOperandState?: React.Dispatch<React.SetStateAction<OperandState>>
   isConst?: boolean
+  hideShift?: boolean
 }
 
 interface UpdateShiftActions {
@@ -64,7 +84,7 @@ const useBinaryPanel = ({ operandState, setOperandState }: BinaryPanelProps): Up
   }
 }
 
-export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOperandState, fontColor, isConst = false }) => {
+export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOperandState, fontColor, hideShift = false, isConst = false }) => {
   const { bits } = operandState
   const { updateLeftShift, updateRightShift } = useBinaryPanel({ operandState, setOperandState })
 
@@ -80,13 +100,19 @@ export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOpera
 
   return (
     <StyledBinaryPanel ref={isConst ? drop : null} fontColor={fontColor || 'black'}>
-        {operandState.shift !== null &&
-            <ShiftControl direction={ShiftDir.LEFT} shiftAmount={operandState.shift} onClick={updateLeftShift} />}
-        {bits.map((bit, index) => (
-            <StyledBinaryDigit key={index} canDrop={isConst ? canDrop : false}>{bit}</StyledBinaryDigit>
-        ))}
-        {operandState.shift !== null &&
-            <ShiftControl direction={ShiftDir.RIGHT} shiftAmount={operandState.shift} onClick={updateRightShift} />}
+        {operandState.shift !== null && !hideShift &&
+          <LeftWrapper>
+            <ShiftControl direction={ShiftDir.LEFT} shiftAmount={operandState.shift} onClick={updateLeftShift} />
+          </LeftWrapper>}
+        <BitsContainer>
+          {bits.map((bit, index) => (
+              <StyledBinaryDigit key={index} canDrop={isConst ? canDrop : false}>{bit}</StyledBinaryDigit>
+          ))}
+        </BitsContainer>
+        {operandState.shift !== null && !hideShift &&
+        <RightWrapper>
+            <ShiftControl direction={ShiftDir.RIGHT} shiftAmount={operandState.shift} onClick={updateRightShift} />
+        </RightWrapper>}
     </StyledBinaryPanel>
   )
 }

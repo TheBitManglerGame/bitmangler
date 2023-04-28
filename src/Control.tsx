@@ -112,13 +112,22 @@ export const ConstControl: FC<ConstControlProps> = function ConstControl ({ name
 }
 
 const StyledShiftControl = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.5vw;
-  opacity: 0.4;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  padding: 5px 10px;
+  opacity: 0.8;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 
   &:hover {
     cursor: pointer;
     opacity: 1;
+    background-color: #e0e0e0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     transform: scale(1.1);
   }
 `
@@ -132,9 +141,13 @@ interface ShiftControlProps {
 export const ShiftControl: FC<ShiftControlProps> = function ShiftControl ({ direction, shiftAmount, onClick }) {
   return (
     <StyledShiftControl onClick={onClick}>
+      {direction === ShiftDir.LEFT && shiftAmount < 0 && (
+        <span style={{ marginRight: '4px', fontSize: '1vw', opacity: 0.6 }}>{Math.abs(shiftAmount)}</span>
+      )}
       {renderDirection(direction)}
-      {direction === ShiftDir.LEFT && shiftAmount < 0 ? shiftAmount : ''}
-      {direction === ShiftDir.RIGHT && shiftAmount > 0 ? shiftAmount : ''}
+      {direction === ShiftDir.RIGHT && shiftAmount > 0 && (
+        <span style={{ marginLeft: '4px', fontSize: '1vw', opacity: 0.6 }}>{shiftAmount}</span>
+      )}
     </StyledShiftControl>
   )
 }

@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 
 export const SubmitButton = styled.button`
   position: fixed;
@@ -35,10 +35,22 @@ export const SimpleControl = styled.div`
     cursor: pointer;
   }
 `
+const pulseAnimation = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+`
 
 export const ResultArrow = styled.div`
   font-size: 2vw;
   margin: 2vw;
+  animation: ${pulseAnimation} 2s infinite ease-in-out;
 `
 
 export const SplitControl = styled.div`
