@@ -1,41 +1,39 @@
-import React from 'react'
-import { useDrop } from 'react-dnd'
 import styled from 'styled-components'
+import { Op, canDropStyles } from './Common'
 
-import { OpType, Op } from './Common'
-
-const StyledOperation = styled.div`
+const StyledOperation = styled.div<{ canDrop: boolean }>`
   border: 1px dashed #ddd;
+  border-radius: 5px;
   margin: 2vw;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #f2f2f2;
   padding: 2vw;
+  font-size: 1.2em;
+  font-weight: bold;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
   &:hover {
     cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
   }
+
+  ${props => canDropStyles(props.canDrop)}
 `
 
 interface OperationProps {
-  content: Op
+  op: Op
+  canDrop: boolean
 }
 
-export const Operation: React.FC<OperationProps> = ({ content }) => {
-  const [{ canDrop }, drop] = useDrop(() => ({
-    accept: OpType.BIN_OPERATION,
-    drop: () => ({}),
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop()
-    })
-  }))
-
-  const disp = content === Op.NOOP ? '?' : content
+export const Operation: React.FC<OperationProps> = ({ op, canDrop }) => {
+  const disp = op === Op.NOOP ? '?' : op
   return (
-        <StyledOperation ref={drop} data-testid="Operation">
-            {canDrop ? 'Insert operation' : disp}
-        </StyledOperation>
+    <StyledOperation data-testid="Operation" canDrop={canDrop}>
+      {canDrop ? 'Insert operation' : disp}
+    </StyledOperation>
   )
 }
