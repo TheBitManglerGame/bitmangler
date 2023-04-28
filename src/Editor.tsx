@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons'
 import { DndProvider, useDrop } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import React from 'react'
 
 import { BinaryPanel } from './BinaryPanel'
 import { Operation } from './Operation'
@@ -15,7 +16,8 @@ import { type Expr, ExprType, evaluate, VALUE_EXPR, BIN_APP_EXPR, BinOperation, 
 import { GameSummaryModal } from './Modal'
 import { EvalStack, TargetDisplay } from './EvalStack'
 import { LeftSidebar, SimpleControl, ResultArrow, SubmitButton, RightSidebar, SplitControl } from './RandomUI'
-import React from 'react'
+
+import { useMeasure } from './useMeasure'
 
 const EditorWrapper = styled.div`
   display: flex;
@@ -33,6 +35,7 @@ const StyledEditorContent = styled.div`
   margin-top: 2.5vw;
   margin-bottom: 20px;
   min-height: 100vh;
+  position: relative;
 `
 
 interface EditorContentProps {
@@ -169,6 +172,7 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
   const [outBits, setOutBits] = useState<Digit[]>(inBitsState.bits)
   const [evaluationFrames, setEvaluationFrames] = useState<Expr[]>([VALUE_EXPR(digitsToInt(bits))])
   const [targetReached, setTargetReached] = useState<boolean>(false)
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
   const binOpActive = binOp === Op.AND || binOp === Op.OR || binOp === Op.XOR
 
   // console.debug('[DEBUG] Editor:render')
@@ -178,6 +182,19 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
     console.debug('[DEBUG]: EVAL_EXPR', inBitsState, binOp, constOperandState)
     setOutBits(evalExpr(inBitsState.bits, constOperandState.bits, binOp))
   }, [inBitsState, binOp, constOperandState])
+
+  useEffect(() => {
+    const handleResize: () => void = () => {
+      setWindowWidth(window.innerWidth)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  const isMobile = windowWidth <= 768
 
   // submit evaluation step
   const submitTransition = (): void => {
@@ -224,6 +241,8 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
     }
   }
 
+  const [{ ref: leftSidebarRef }, leftSidebarBounds] = useMeasure()
+
   return (
         <DndProvider backend={HTML5Backend}>
             {targetReached && (
@@ -234,19 +253,19 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
                   bitBotExpr={solverSolution || ZERO_EXPR_VAL}
                 />)}
             <EditorWrapper>
-            <LeftSidebar>
+            <LeftSidebar ref={leftSidebarRef}>
                 <SimpleControl>HELP</SimpleControl>
-                <EvalStack frames={evaluationFrames} onDropLast={dropLastFrame} />
+                <EvalStack frames={evaluationFrames} onDropLast={dropLastFrame} leftSidebarWidth={leftSidebarBounds.width} />
                 <TargetDisplay>
-                    <pre>{`Target: ${targetBits.map(bit => bit.toString()).join('')}`}</pre>
+                <pre>{`${isMobile ? '' : 'Target: '}${targetBits.map(bit => bit.toString()).join('')}`}</pre>
                 </TargetDisplay>
             </LeftSidebar>
             <EditorContent>
                 <BinaryPanel fontColor="black" operandState={inBitsState} setOperandState={setInBitsState} />
                 <Operation op={binOp} canDrop={false} />
                 { binOpActive && <ConstOperand operandState={constOperandState} setOperandState={setConstOperandState} /> }
-                <ResultArrow> <FontAwesomeIcon icon={faArrowDown} color="#e2e0df"/> </ResultArrow>
-                <BinaryPanel fontColor="#e2e0df" operandState={{ originalBits: outBits, bits: outBits, shift: 0 }} />
+                <ResultArrow> <FontAwesomeIcon icon={faArrowDown} color="#a8a8a8"/> </ResultArrow>
+                <BinaryPanel hideShift fontColor="#e2e0df" operandState={{ originalBits: outBits, bits: outBits, shift: 0 }} />
                 <SubmitButton onClick={submitTransition}>Submit transition</SubmitButton>
             </EditorContent>
             <RightSidebar>

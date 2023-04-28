@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { useMediaQuery } from 'react-responsive'
 
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { Fragment } from 'react'
@@ -17,6 +18,10 @@ const FrameDisplay = styled.div`
     align-items: center;
     overflow: visible;
     position: relative;
+
+    @media (max-width: 768px) {
+      font-size: 2vw;
+    }
 `
 
 const StyledEvalStack = styled.div`
@@ -29,6 +34,11 @@ export const TargetDisplay = styled(FrameDisplay)`
   bottom: 0;
   border: 3px solid #2696fc;
   background-color: #badeff;
+
+  @media (max-width: 768px) {
+    margin-top: 3em;
+    font-size: 2vw;
+  }
 `
 
 const Arrow = styled.div`
@@ -52,22 +62,37 @@ const CloseIcon = styled(FontAwesomeIcon)`
 interface EvalStackProps {
   frames: Expr[]
   onDropLast: () => void
+  leftSidebarWidth: number
 }
 
-export const EvalStack: React.FC<EvalStackProps> = ({ frames, onDropLast }) => {
+export const EvalStack: React.FC<EvalStackProps> = ({ frames, onDropLast, leftSidebarWidth }) => {
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' })
   return (
-        <StyledEvalStack>
-            {frames.map((frame, index) => (
-                <Fragment key={index}>
-                    <FrameDisplay>
-                        {index !== 0 && index === frames.length - 1 && (
-                        <CloseIcon icon={faTimes} onClick={onDropLast} />
-                        )}
-                        <pre>{`${prettyPrint(frame)} ${index === 0 ? '' : '=> ' + print8LSB(evaluate(frame))}`}</pre>
-                    </FrameDisplay>
-                    {index < frames.length - 1 && <Arrow />}
-                </Fragment>
-            ))}
-        </StyledEvalStack>
+    <StyledEvalStack>
+      {frames.map((frame, index) => {
+        const evaluationResult = print8LSB(evaluate(frame))
+        const averageCharWidth = 40
+        const shouldRenderFullContent =
+          index === 0 || evaluationResult.length * averageCharWidth < leftSidebarWidth * 0.8
+
+        return (
+          <Fragment key={index}>
+            <FrameDisplay>
+              {index !== 0 && index === frames.length - 1 && (
+                <CloseIcon icon={faTimes} onClick={onDropLast} />
+              )}
+              <pre>
+                {isMobile
+                  ? evaluationResult
+                  : shouldRenderFullContent
+                    ? `${prettyPrint(frame)} => ${evaluationResult}`
+                    : evaluationResult}
+              </pre>
+            </FrameDisplay>
+            {index < frames.length - 1 && <Arrow />}
+          </Fragment>
+        )
+      })}
+    </StyledEvalStack>
   )
 }
