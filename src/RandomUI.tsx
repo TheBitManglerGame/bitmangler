@@ -1,8 +1,8 @@
 import styled, { keyframes } from 'styled-components'
 
 export const SubmitButton = styled.button`
-  position: fixed;
-  bottom: 0;
+  position: absolute;
+  bottom: 2vw;
   left: 50%;
   transform: translateX(-50%);
   margin: 2vw 0;
@@ -13,10 +13,23 @@ export const SubmitButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   font-size: 2vw;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #0069d9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transform: translateX(-50%) scale(1.05);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 4vw;
+    padding: 8px 16px;
+    bottom: 5vw;
+  }
 `
 
 export const RightSidebar = styled.div`
-  width: 20%;
+  width: 10%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -63,7 +76,7 @@ export const SplitControl = styled.div`
 `
 
 export const LeftSidebar = styled.div`
-  width: 27%;
+  width: 20%;
   background-color: #f2f2f2;
   display: flex;
   flex-direction: column;

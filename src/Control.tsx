@@ -20,6 +20,12 @@ const StyledControl = styled.div`
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
   }
+
+  @media (max-width: 768px) {
+    font-size: 2vw;
+    padding: 8px 16px;
+    height: calc(100% / 3);
+  }
 `
 
 const StyledSplitControl = styled.div`
@@ -38,6 +44,14 @@ const StyledSplitControl = styled.div`
     border: 2px solid #aaa;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2vw;
+    padding: 8px 8px;
+    height: calc(100% / 3);
+    margin: 8px 0;
+    border-width: 0px; // Reduce border width on mobile screens
   }
 `
 
@@ -116,6 +130,7 @@ const StyledShiftControl = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 1.5vw;
+  color: #a8a8a8;
   background-color: #f0f0f0;
   border-radius: 3px;
   padding: 5px 10px;

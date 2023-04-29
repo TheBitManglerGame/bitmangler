@@ -5,7 +5,7 @@ import { type OperandState, OpType, ShiftDir, canDropStyles } from './Common'
 import { ShiftControl } from './Control'
 import { evalShift } from './Eval'
 
-const StyledBinaryDigit = styled.div<{ canDrop: boolean }>`
+const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,7 +14,7 @@ const StyledBinaryDigit = styled.div<{ canDrop: boolean }>`
   font-weight: bold;
   border-radius: 5px;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  color: ${props => props.canDrop ? 'rgba(0, 0, 0, 0.3)' : 'black'};
+  color: ${props => props.canDrop ? 'rgba(0, 0, 0, 0.3)' : props.fontColor};
 
   &:hover {
     cursor: pointer;
@@ -106,7 +106,7 @@ export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOpera
           </LeftWrapper>}
         <BitsContainer>
           {bits.map((bit, index) => (
-              <StyledBinaryDigit key={index} canDrop={isConst ? canDrop : false}>{bit}</StyledBinaryDigit>
+              <StyledBinaryDigit key={index} canDrop={isConst ? canDrop : false} fontColor={fontColor || 'black'}>{bit}</StyledBinaryDigit>
           ))}
         </BitsContainer>
         {operandState.shift !== null && !hideShift &&
