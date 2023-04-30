@@ -7,15 +7,17 @@ import { evalShift } from './Eval'
 
 const UPD_TIMOUT = 200
 
-const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string, sliding: number, scaleFactor: number }>`
+const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string, sliding: number, scaleFactor: number, fadeOut: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 0 5px;
-  font-size: 3vw;
+  color: ${props => props.canDrop ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.7)'};
+  font-size: ${props => props.fadeOut ? '1.5vw' : '3vw'};
   font-weight: bold;
   border-radius: 5px;
   transition: ${props => props.sliding !== 0 ? `${UPD_TIMOUT}ms ease-in-out` : 'none'};
+  opacity: ${props => (props.fadeOut && props.sliding !== 0 ? 0 : 1)};
   transform: ${props => `translate3d(${props.sliding * 125 * props.scaleFactor}px, 0, 0)`};
   color: ${props => props.canDrop ? 'rgba(0, 0, 0, 0.3)' : props.fontColor};
 
@@ -139,17 +141,18 @@ export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOpera
             <ShiftControl direction={ShiftDir.LEFT} shiftAmount={operandState.shift} onClick={updateLeftShift} />
           </LeftWrapper>}
         <BitsContainer>
-          {bits.map((bit, index) => (
-              <StyledBinaryDigit
-              key={index}
-              canDrop={isConst ? canDrop : false}
-              fontColor={fontColor || 'black'}
-              sliding={operandState.sliding[index]}
-              scaleFactor={scaleFactor}
-            >
-              {bit}
-            </StyledBinaryDigit>
-          ))}
+        {bits.map((bit, index) => (
+          <StyledBinaryDigit
+            key={index}
+            canDrop={isConst ? canDrop : false}
+            fontColor={fontColor || 'black'}
+            sliding={operandState.sliding[index]}
+            scaleFactor={scaleFactor}
+            fadeOut={(index === 0 && operandState.sliding[index] === -1) || (index === bits.length - 1 && operandState.sliding[index] === 1)}
+          >
+            {bit}
+          </StyledBinaryDigit>
+        ))}
         </BitsContainer>
         {operandState.shift !== null && !hideShift &&
         <RightWrapper>
