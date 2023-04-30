@@ -16,7 +16,7 @@ const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string, slid
   font-weight: bold;
   border-radius: 5px;
   transition: ${props => props.sliding !== 0 ? `${UPD_TIMOUT}ms ease-in-out` : 'none'};
-  transform: ${props => `translateX(${props.sliding * 125 * props.scaleFactor}px)`};
+  transform: ${props => `translate3d(${props.sliding * 125 * props.scaleFactor}px, 0, 0)`};
   color: ${props => props.canDrop ? 'rgba(0, 0, 0, 0.3)' : props.fontColor};
 
   &:hover {
