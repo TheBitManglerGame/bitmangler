@@ -93,6 +93,7 @@ export interface OperandState {
   originalBits: Digit[]
   bits: Digit[]
   shift: number
+  sliding: number[]
 }
 
 export const borderAnimation = keyframes`

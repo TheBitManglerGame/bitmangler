@@ -1,11 +1,13 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDrop } from 'react-dnd'
 import styled from 'styled-components'
 import { type OperandState, OpType, ShiftDir, canDropStyles } from './Common'
 import { ShiftControl } from './Control'
 import { evalShift } from './Eval'
 
-const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string }>`
+const UPD_TIMOUT = 200
+
+const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string, sliding: number, scaleFactor: number }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,7 +15,8 @@ const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string }>`
   font-size: 3vw;
   font-weight: bold;
   border-radius: 5px;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: ${props => props.sliding !== 0 ? `${UPD_TIMOUT}ms ease-in-out` : 'none'};
+  transform: ${props => `translateX(${props.sliding * 125 * props.scaleFactor}px)`};
   color: ${props => props.canDrop ? 'rgba(0, 0, 0, 0.3)' : props.fontColor};
 
   &:hover {
@@ -72,9 +75,23 @@ const useBinaryPanel = ({ operandState, setOperandState }: BinaryPanelProps): Up
     if (setOperandState) {
       setOperandState((prevState: OperandState) => ({
         ...prevState,
-        bits: evalShift(operandState.originalBits, shift + direction),
-        shift: shift + direction
+        shift: shift + direction,
+        sliding: prevState.sliding.map(() => direction)
       }))
+      // Delay the update of bits field
+      setTimeout(() => {
+        setOperandState((prevState: OperandState) => ({
+          ...prevState,
+          bits: evalShift(operandState.originalBits, shift + direction)
+        }))
+      }, UPD_TIMOUT)
+      // Reset sliding values after transition is complete
+      setTimeout(() => {
+        setOperandState((prevState: OperandState) => ({
+          ...prevState,
+          sliding: prevState.sliding.map(() => 0)
+        }))
+      }, UPD_TIMOUT)
     }
   }, [shift, setOperandState, operandState])
 
@@ -87,6 +104,23 @@ const useBinaryPanel = ({ operandState, setOperandState }: BinaryPanelProps): Up
 export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOperandState, fontColor, hideShift = false, isConst = false }) => {
   const { bits } = operandState
   const { updateLeftShift, updateRightShift } = useBinaryPanel({ operandState, setOperandState })
+  const [scaleFactor, setScaleFactor] = useState(1)
+
+  useEffect(() => {
+    const updateScaleFactor: () => void = () => {
+      const viewportWidth = window.innerWidth
+      const newScaleFactor = viewportWidth / 1920
+      console.log('newScaleFactor', newScaleFactor)
+      setScaleFactor(newScaleFactor)
+    }
+
+    updateScaleFactor()
+    window.addEventListener('resize', updateScaleFactor)
+
+    return () => {
+      window.removeEventListener('resize', updateScaleFactor)
+    }
+  }, [])
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [{ canDrop }, drop] = useDrop(() => ({
@@ -106,7 +140,15 @@ export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOpera
           </LeftWrapper>}
         <BitsContainer>
           {bits.map((bit, index) => (
-              <StyledBinaryDigit key={index} canDrop={isConst ? canDrop : false} fontColor={fontColor || 'black'}>{bit}</StyledBinaryDigit>
+              <StyledBinaryDigit
+              key={index}
+              canDrop={isConst ? canDrop : false}
+              fontColor={fontColor || 'black'}
+              sliding={operandState.sliding[index]}
+              scaleFactor={scaleFactor}
+            >
+              {bit}
+            </StyledBinaryDigit>
           ))}
         </BitsContainer>
         {operandState.shift !== null && !hideShift &&
