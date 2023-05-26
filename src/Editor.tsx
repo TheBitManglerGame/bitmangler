@@ -12,7 +12,7 @@ import { ConstControl, Control } from './Control'
 import { type Digit, Op, ONE, ZERO, type OperandState, digitsToInt, intToDigits, isBinOp, OpType } from './Common'
 import { ConstOperand } from './Const'
 import { evalExpr, evalShift } from './Eval'
-import { type Expr, ExprType, evaluate, VALUE_EXPR, BIN_APP_EXPR, BinOperation, NOT_EXPR, SHIFT_EXPR, ShiftDirection, unwindStackToExpr, ZERO_EXPR_VAL } from './Expr'
+import { type Expr, ExprType, evaluate, VALUE_EXPR, BIN_APP_EXPR, BinOperation, NOT_EXPR, SHIFT_EXPR, ShiftDirection, unwindStackToExpr, ZERO_EXPR_VAL, exprEquals } from './Expr'
 import { GameSummaryModal } from './Modal'
 import { EvalStack, TargetDisplay } from './EvalStack'
 import { LeftSidebar, SimpleControl, ResultArrow, SubmitButton, RightSidebar, SplitControl } from './RandomUI'
@@ -200,7 +200,15 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
   const submitTransition = (): void => {
     console.debug('[DEBUG]: SUBMIT_TRANSITION')
     const expr: Expr = UIstateToExpr(binOp, inBitsState, constOperandState)
-    setEvaluationFrames(prevFrames => [...prevFrames, expr])
+    setEvaluationFrames(prevFrames => {
+      // Do not allow to push eval frame value identical to last one on the stack
+      const topFrame = VALUE_EXPR(evaluate(prevFrames[prevFrames.length - 1]))
+      const newFrame = VALUE_EXPR(evaluate(expr))
+      if (exprEquals(topFrame, newFrame)) {
+        return prevFrames
+      }
+      return [...prevFrames, expr]
+    })
     if (evaluate(expr) === digitsToInt(targetBits)) {
       setTargetReached(true)
     } else {
