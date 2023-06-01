@@ -10,7 +10,8 @@ import {
   digitsFromUrlParam,
   print8LSB,
   ONE,
-  ZERO
+  ZERO,
+  parseAllowedOpFromString
 } from '../Common'
 
 describe('UI Helpers and Types', () => {
@@ -63,5 +64,27 @@ describe('UI Helpers and Types', () => {
   test('ONE and ZERO', () => {
     expect(ONE).toEqual([0, 0, 0, 0, 0, 0, 0, 1])
     expect(ZERO).toEqual([0, 0, 0, 0, 0, 0, 0, 0])
+  })
+
+  describe('parseAllowedOpFromString', () => {
+    it('should parse allowed op string values', () => {
+      expect(parseAllowedOpFromString('OR')).toBe(Op.OR)
+      expect(parseAllowedOpFromString('XOR')).toBe(Op.XOR)
+      expect(parseAllowedOpFromString('AND')).toBe(Op.AND)
+      expect(parseAllowedOpFromString('NOT')).toBe(Op.NOT)
+    })
+
+    it('should throw an error for invalid op string values', () => {
+      expect(() => parseAllowedOpFromString('invalid')).toThrowError(
+        'parseAllowedOpFromString: cannot parse allowed ops'
+      )
+    })
+
+    it('should handle case-insensitive op string values', () => {
+      expect(parseAllowedOpFromString('or')).toBe(Op.OR)
+      expect(parseAllowedOpFromString('xor')).toBe(Op.XOR)
+      expect(parseAllowedOpFromString('and')).toBe(Op.AND)
+      expect(parseAllowedOpFromString('not')).toBe(Op.NOT)
+    })
   })
 })
