@@ -15,6 +15,23 @@ export const enum Op {
   NOOP = 'NOOP',
 }
 
+export const ALL_ALLOWED_OPS: Op[] = [Op.OR, Op.XOR, Op.NOT, Op.AND]
+
+export function parseAllowedOpFromString (value: string): Op {
+  switch (value.toUpperCase()) {
+    case 'OR':
+      return Op.OR
+    case 'XOR':
+      return Op.XOR
+    case 'AND':
+      return Op.AND
+    case 'NOT':
+      return Op.NOT
+    default:
+      throw new Error('parseAllowedOpFromString: cannot parse allowed ops')
+  }
+}
+
 export function isBinOp (op: Op): boolean {
   switch (op) {
     case Op.AND:
@@ -33,6 +50,8 @@ export function renderDirection (dir: ShiftDir): string {
   if (dir === ShiftDir.RIGHT) return '>>'
   throw new Error('renderDirection: unknown direction')
 }
+
+export type AllowedOp = 'or' | 'xor' | 'and' | 'not'
 
 export type Digit = 0 | 1
 

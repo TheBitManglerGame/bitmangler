@@ -69,6 +69,7 @@ const EditorContent: React.FC<EditorContentProps> = ({ children }) => {
 interface EditorProps {
   bits: Digit[]
   targetBits: Digit[]
+  allowedOps: Op[]
   solverSolution: Expr | null
   onNewGame: () => void
 }
@@ -165,7 +166,7 @@ export function ExprToUIstate (expr: Expr): { op: Op, operand1: OperandState, op
   }
 }
 
-export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNewGame }) => {
+export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNewGame, allowedOps }) => {
   const [inBitsState, setInBitsState] = useState<OperandState>({ originalBits: bits, bits, shift: 0, sliding: Array(8).fill(0) })
   const [constOperandState, setConstOperandState] = useState<OperandState>({ originalBits: ONE, bits: ONE, shift: 0, sliding: Array(8).fill(0) })
   const [binOp, setbinOp] = useState(Op.NOOP)
@@ -281,10 +282,10 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
                     <ConstControl name={'1'} setOperandState={setConstOperandState} operand={ONE} /> OR
                     <ConstControl name={'0'} setOperandState={setConstOperandState} operand={ZERO} />
                 </SplitControl>
-                <Control name={'AND (&)'} setbinOp={setbinOp} op={Op.AND} />
-                <Control name={'OR  (|)'} setbinOp={setbinOp} op={Op.OR} />
-                <Control name={'XOR (^)'} setbinOp={setbinOp} op={Op.XOR} />
-                <Control name={'NOT (~)'} setbinOp={setbinOp} op={Op.NOT} />
+                {allowedOps.includes(Op.AND) && <Control name={'AND (&)'} setbinOp={setbinOp} op={Op.AND} />}
+                {allowedOps.includes(Op.OR) && <Control name={'OR  (|)'} setbinOp={setbinOp} op={Op.OR} />}
+                {allowedOps.includes(Op.XOR) && <Control name={'XOR (^)'} setbinOp={setbinOp} op={Op.XOR} />}
+                {allowedOps.includes(Op.NOT) && <Control name={'NOT (~)'} setbinOp={setbinOp} op={Op.NOT} />}
             </RightSidebar>
             </EditorWrapper>
         </DndProvider>

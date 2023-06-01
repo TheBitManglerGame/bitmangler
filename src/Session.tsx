@@ -1,12 +1,18 @@
 import { type FC, useState } from 'react'
 
 import Editor from './Editor'
-import { type Digit, digitsFromUrlParam, genRandomTargetDest } from './Common'
+import { type Digit, digitsFromUrlParam, genRandomTargetDest, type Op, parseAllowedOpFromString, ALL_ALLOWED_OPS } from './Common'
 import { solve } from './Solver'
 import { useNavigate } from 'react-router-dom'
 import { type Expr } from './Expr'
 
-function getBitQueryParams (): { bits: Digit[] | null, targetBits: Digit[] | null } {
+interface BitQueryParams {
+  bits: Digit[] | null
+  targetBits: Digit[] | null
+  allowedOps: Op[]
+}
+
+function getBitQueryParams (): BitQueryParams {
   const searchParams: URLSearchParams = new URLSearchParams(window.location.search)
 
   if (!searchParams.get('bits')) {
@@ -17,9 +23,18 @@ function getBitQueryParams (): { bits: Digit[] | null, targetBits: Digit[] | nul
     console.warn("[WARN] 'targetBits' url parameter is not set")
   }
 
+  let allowedOps: Op[]
+  const allowedOpsParamsString = searchParams.get('allowedOps')
+  if (!allowedOpsParamsString) {
+    allowedOps = ALL_ALLOWED_OPS
+  } else {
+    allowedOps = allowedOpsParamsString.split(',').map(parseAllowedOpFromString)
+  }
+  console.log('allowedOps:', allowedOps)
   return {
     bits: digitsFromUrlParam(searchParams.get('bits')),
-    targetBits: digitsFromUrlParam(searchParams.get('targetBits'))
+    targetBits: digitsFromUrlParam(searchParams.get('targetBits')),
+    allowedOps
   }
 }
 
@@ -27,7 +42,7 @@ const PuzzleSession: FC = () => {
   const navigate = useNavigate()
 
   const [bitsGen, targetBitsGen] = genRandomTargetDest()
-  const { bits: bitsFromUrlParam, targetBits: targetBitsFromUrlParam } = getBitQueryParams()
+  const { bits: bitsFromUrlParam, targetBits: targetBitsFromUrlParam, allowedOps: allowedOpsURLParam } = getBitQueryParams()
   const [bits, setBits] = useState<Digit[]>(bitsFromUrlParam || bitsGen)
   const [targetBits, setTargetBits] = useState<Digit[]>(targetBitsFromUrlParam || targetBitsGen)
   const [solution, setSolution] = useState<Expr | null>(solve(bits, targetBits))
@@ -45,7 +60,7 @@ const PuzzleSession: FC = () => {
     setGameKey(gameKey + 1)
   }
 
-  return (<Editor key={gameKey} bits={bits} targetBits={targetBits} solverSolution={solution} onNewGame={onNewGame}/>)
+  return (<Editor key={gameKey} bits={bits} targetBits={targetBits} allowedOps={allowedOpsURLParam} solverSolution={solution} onNewGame={onNewGame}/>)
 }
 
 export default PuzzleSession
