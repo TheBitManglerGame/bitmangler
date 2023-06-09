@@ -14,7 +14,7 @@ import { ConstOperand } from './Const'
 import { evalExpr, evalShift } from './Eval'
 import { type Expr, ExprType, evaluate, VALUE_EXPR, BIN_APP_EXPR, BinOperation, NOT_EXPR, SHIFT_EXPR, ShiftDirection, unwindStackToExpr, ZERO_EXPR_VAL, exprEquals } from './Expr'
 import { GameSummaryModal } from './Modal'
-import { EvalStack, TargetDisplay } from './EvalStack'
+import { EvalStack, HighlightedFrameDisplay } from './EvalStack'
 import { LeftSidebar, SimpleControl, ResultArrow, SubmitButton, RightSidebar, SplitControl } from './RandomUI'
 
 import { useMeasure } from './useMeasure'
@@ -265,9 +265,9 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
             <LeftSidebar ref={leftSidebarRef}>
                 <SimpleControl>HELP</SimpleControl>
                 <EvalStack frames={evaluationFrames} onDropLast={dropLastFrame} leftSidebarWidth={leftSidebarBounds.width} />
-                <TargetDisplay>
+                <HighlightedFrameDisplay borderColor={'#2696fc'} backgroundColor={'#badeff'}>
                 <pre>{`${isMobile ? '' : 'Target: '}${targetBits.map(bit => bit.toString()).join('')}`}</pre>
-                </TargetDisplay>
+                </HighlightedFrameDisplay>
             </LeftSidebar>
             <EditorContent>
                 <BinaryPanel fontColor="black" operandState={inBitsState} setOperandState={setInBitsState} />

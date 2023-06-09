@@ -7,7 +7,7 @@ import { type Expr, prettyPrint, evaluate } from './Expr'
 import { print8LSB } from './Common'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const FrameDisplay = styled.div`
+const FrameDisplay = styled.div<{ borderColor?: string, backgroundColor?: string }>`
     padding: 1rem;
     border: 1px solid #ccc;
     margin: 1rem;
@@ -27,19 +27,21 @@ const FrameDisplay = styled.div`
 const StyledEvalStack = styled.div`
 `
 
-export const TargetDisplay = styled(FrameDisplay)`
+export const HighlightedFrameDisplay = styled(FrameDisplay)<{ borderColor?: string, backgroundColor?: string }>`
   margin-top: 5em;
   align-self: stretch;
   width: relative;
   bottom: 0;
-  border: 3px solid #2696fc;
-  background-color: #badeff;
+  border: 3px solid ${({ borderColor }) => borderColor};
+  background-color: ${({ backgroundColor }) => backgroundColor};
 
   @media (max-width: 768px) {
     margin-top: 3em;
     font-size: 2vw;
   }
 `
+// border: 3px solid #2696fc;
+// background-color: #badeff;
 
 const Arrow = styled.div`
     width: 10px;
@@ -67,28 +69,33 @@ interface EvalStackProps {
 
 export const EvalStack: React.FC<EvalStackProps> = ({ frames, onDropLast, leftSidebarWidth }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' })
+
   return (
     <StyledEvalStack>
       {frames.map((frame, index) => {
         const evaluationResult = print8LSB(evaluate(frame))
         const averageCharWidth = 40
-        const shouldRenderFullContent =
-          index === 0 || evaluationResult.length * averageCharWidth < leftSidebarWidth * 0.8
+        const shouldRenderFullContent = evaluationResult.length * averageCharWidth < leftSidebarWidth * 0.8
+        const DisplayComponent = index === 0 ? HighlightedFrameDisplay : FrameDisplay
 
         return (
           <Fragment key={index}>
-            <FrameDisplay>
+           <DisplayComponent
+            borderColor={'#8B8000'} backgroundColor={'#FFFF8F'}
+            >
               {index !== 0 && index === frames.length - 1 && (
                 <CloseIcon icon={faTimes} onClick={onDropLast} />
               )}
               <pre>
-                {isMobile
-                  ? evaluationResult
+              {isMobile
+                ? evaluationResult
+                : index === 0
+                  ? 'Input: ' + evaluationResult
                   : shouldRenderFullContent
                     ? `${prettyPrint(frame)} => ${evaluationResult}`
                     : evaluationResult}
               </pre>
-            </FrameDisplay>
+            </DisplayComponent>
             {index < frames.length - 1 && <Arrow />}
           </Fragment>
         )
