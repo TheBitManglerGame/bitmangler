@@ -28,7 +28,7 @@ const StyledEvalStack = styled.div`
 `
 
 export const HighlightedFrameDisplay = styled(FrameDisplay)<{ borderColor?: string, backgroundColor?: string }>`
-  margin-top: 5em;
+  margin-top: 1.5vw;
   align-self: stretch;
   width: relative;
   bottom: 0;

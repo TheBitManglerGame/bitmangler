@@ -2,17 +2,17 @@ import styled, { keyframes } from 'styled-components'
 
 export const SubmitButton = styled.button`
   position: absolute;
-  bottom: 2vw;
+  bottom: 12vw;
   left: 50%;
   transform: translateX(-50%);
-  margin: 2vw 0;
-  padding: 10px 20px;
+  margin: 4vw 0;
+  padding: 16px 64px;
   background-color: #007bff;
   color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 16px;
   cursor: pointer;
-  font-size: 2vw;
+  font-size: 3vw;
   transition: all 0.3s ease;
 
   &:hover {
@@ -22,9 +22,10 @@ export const SubmitButton = styled.button`
   }
 
   @media (max-width: 768px) {
+    margin: 2vw 0 3vw 0;
     font-size: 4vw;
-    padding: 8px 16px;
-    bottom: 5vw;
+    padding: 16px 32px;
+    bottom: 7vw;
   }
 `
 
@@ -32,14 +33,13 @@ export const RightSidebar = styled.div`
   width: 10%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100vh; /* Set height to 100% of viewport height */
+  justify-content: space-evenly;
+  height: 100vh;
 `
 
 export const SimpleControl = styled.div`
-  height: calc(100% / 6);
   background-color: #f2f2f2;
-  border: 1px solid #ddd;
+  padding: 2vw;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -61,7 +61,7 @@ const pulseAnimation = keyframes`
 `
 
 export const ResultArrow = styled.div`
-  font-size: 2vw;
+  font-size: 1vw;
   margin: 2vw;
   animation: ${pulseAnimation} 2s infinite ease-in-out;
 `
@@ -76,12 +76,20 @@ export const SplitControl = styled.div`
 `
 
 export const LeftSidebar = styled.div`
-  width: 20%;
+  width: 15%;
+  min-height: 80vh;
   background-color: #f2f2f2;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 100vh; /* Set height to 100% of viewport height */
   overflow: auto;
   position: relative;
+  border: 1px solid #ddd;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  margin-top: 5%;
+
+  @media (max-width: 768px) {
+    width: 20%;
+  }
 `
