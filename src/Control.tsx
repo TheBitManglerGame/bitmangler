@@ -88,6 +88,10 @@ const StyledShiftControl = styled.div`
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     transform: scale(1.1);
   }
+
+  @media (max-width: 768px) {
+    font-size: 2vw;
+  }
 `
 
 interface ShiftControlProps {
@@ -100,11 +104,11 @@ export const ShiftControl: FC<ShiftControlProps> = function ShiftControl ({ dire
   return (
     <StyledShiftControl onClick={onClick}>
       {direction === ShiftDir.LEFT && shiftAmount < 0 && (
-        <span style={{ marginRight: '4px', fontSize: '1vw', opacity: 0.6 }}>{Math.abs(shiftAmount)}</span>
+        <span style={{ marginRight: '4px', fontSize: '2vw', opacity: 0.6 }}>{Math.abs(shiftAmount)}</span>
       )}
       {renderDirection(direction)}
       {direction === ShiftDir.RIGHT && shiftAmount > 0 && (
-        <span style={{ marginLeft: '4px', fontSize: '1vw', opacity: 0.6 }}>{shiftAmount}</span>
+        <span style={{ marginLeft: '4px', fontSize: '2vw', opacity: 0.6 }}>{shiftAmount}</span>
       )}
     </StyledShiftControl>
   )

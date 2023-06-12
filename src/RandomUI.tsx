@@ -23,9 +23,9 @@ export const SubmitButton = styled.button`
 
   @media (max-width: 768px) {
     margin: 2vw 0 3vw 0;
-    font-size: 4vw;
+    font-size: 3vw;
     padding: 16px 32px;
-    bottom: 7vw;
+    bottom: 5vw;
   }
 `
 
