@@ -1,21 +1,21 @@
 import { type FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowDown } from '@fortawesome/free-solid-svg-icons'
+import { faArrowDown, faChessKnight } from '@fortawesome/free-solid-svg-icons'
 import { DndProvider, useDrop } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import React from 'react'
 
 import { BinaryPanel } from './BinaryPanel'
 import { Operation } from './Operation'
-import { ConstControl, Control } from './Control'
-import { type Digit, Op, ONE, ZERO, type OperandState, digitsToInt, intToDigits, isBinOp, OpType } from './Common'
+import { Control, StyledControl } from './Control'
+import { type Digit, Op, ONE, type OperandState, digitsToInt, intToDigits, isBinOp, OpType } from './Common'
 import { ConstOperand } from './Const'
 import { evalExpr, evalShift } from './Eval'
 import { type Expr, ExprType, evaluate, VALUE_EXPR, BIN_APP_EXPR, BinOperation, NOT_EXPR, SHIFT_EXPR, ShiftDirection, unwindStackToExpr, ZERO_EXPR_VAL, exprEquals } from './Expr'
 import { GameSummaryModal } from './Modal'
 import { EvalStack, HighlightedFrameDisplay } from './EvalStack'
-import { LeftSidebar, SimpleControl, ResultArrow, SubmitButton, RightSidebar, SplitControl } from './RandomUI'
+import { LeftSidebar, SimpleControl, ResultArrow, SubmitButton, RightSidebar } from './RandomUI'
 
 import { useMeasure } from './useMeasure'
 
@@ -23,7 +23,6 @@ const EditorWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  height: 100vh;
 `
 
 const StyledEditorContent = styled.div`
@@ -32,10 +31,14 @@ const StyledEditorContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 2.5vw;
-  margin-bottom: 20px;
+  margin-top: 11vw;
   min-height: 100vh;
   position: relative;
+
+  @media (max-width: 768px) {
+    margin-top: 0.01vw;
+    padding: 32px 64px;
+  }
 `
 
 interface EditorContentProps {
@@ -275,13 +278,12 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
                 { binOpActive && <ConstOperand operandState={constOperandState} setOperandState={setConstOperandState} /> }
                 <ResultArrow> <FontAwesomeIcon icon={faArrowDown} color="#a8a8a8"/> </ResultArrow>
                 <BinaryPanel hideShift fontColor="#e2e0df" operandState={{ originalBits: outBits, bits: outBits, shift: 0, sliding: Array(8).fill(0) }} />
-                <SubmitButton onClick={submitTransition}>Submit transition</SubmitButton>
+                <SubmitButton onClick={submitTransition}>
+                <FontAwesomeIcon icon={faChessKnight} color="white"/>
+                </SubmitButton>
             </EditorContent>
             <RightSidebar>
-                <SplitControl>
-                    <ConstControl name={'1'} setOperandState={setConstOperandState} operand={ONE} /> OR
-                    <ConstControl name={'0'} setOperandState={setConstOperandState} operand={ZERO} />
-                </SplitControl>
+                <StyledControl>1</StyledControl>
                 {allowedOps.includes(Op.AND) && <Control name={'AND (&)'} setbinOp={setbinOp} op={Op.AND} />}
                 {allowedOps.includes(Op.OR) && <Control name={'OR  (|)'} setbinOp={setbinOp} op={Op.OR} />}
                 {allowedOps.includes(Op.XOR) && <Control name={'XOR (^)'} setbinOp={setbinOp} op={Op.XOR} />}

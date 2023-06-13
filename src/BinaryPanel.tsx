@@ -6,6 +6,7 @@ import { ShiftControl } from './Control'
 import { evalShift } from './Eval'
 
 const UPD_TIMOUT = 200
+const MOBILE_VIEWPORT_WIDTH = 768
 
 const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string, sliding: number, scaleFactor: number, fadeOut: boolean }>`
   display: flex;
@@ -13,7 +14,7 @@ const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string, slid
   align-items: center;
   margin: 0 5px;
   color: ${props => props.canDrop ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.7)'};
-  font-size: ${props => props.fadeOut ? '1.5vw' : '3vw'};
+  font-size: ${props => props.fadeOut ? '2.5vw' : '5vw'};
   font-weight: bold;
   border-radius: 5px;
   transition: ${props => props.sliding !== 0 ? `${UPD_TIMOUT}ms ease-in-out` : 'none'};
@@ -26,12 +27,16 @@ const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string, slid
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
   }
 
+  @media (max-width: 768px) {
+    font-size: ${props => props.fadeOut ? '2.5vw' : '5vw'};
+  }
+
   ${props => canDropStyles(props.canDrop)}
 `
 
 export const StyledBinaryPanel = styled.div<{ fontColor: string }>`
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
   width 90%;
   margin: 1vw;
@@ -40,21 +45,31 @@ export const StyledBinaryPanel = styled.div<{ fontColor: string }>`
 
 const BitsContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
-  width: 80%;
+  width: 85%;
+
+  @media (max-width: 768px) {
+  }
 `
 
 const LeftWrapper = styled.div`
   flex: 1;
   display: flex;
-  justify-content: flex-start;
+  // justify-content: flex-start;
+
+  @media (max-width: 768px) {
+    margin-right: 2vw;
+  }
 `
 
 const RightWrapper = styled.div`
   flex: 1;
   display: flex;
-  justify-content: flex-end;
+  // justify-content: flex-end;
+
+  @media (max-width: 768px) {
+  }
 `
 
 interface BinaryPanelProps {
@@ -72,7 +87,32 @@ interface UpdateShiftActions {
 
 const useBinaryPanel = ({ operandState, setOperandState }: BinaryPanelProps): UpdateShiftActions => {
   const { shift } = operandState
+  const [isMobile, setIsMobile] = useState(window.innerWidth < MOBILE_VIEWPORT_WIDTH)
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < MOBILE_VIEWPORT_WIDTH)
+    }
+    window.addEventListener('resize', checkScreenSize)
+    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+    return () => window.removeEventListener('resize', checkScreenSize)
+  }, [])
+
   const updateShift = useCallback((direction: number) => {
+    if (isMobile) { // TODO: disable animation via settings
+      if (shift !== null && ((shift === -7 && direction < 0) || (shift === 7 && direction > 0))) return
+      if (setOperandState) {
+        setOperandState((prevState: OperandState) => ({
+          ...prevState,
+          shift: shift + direction,
+          bits: evalShift(operandState.originalBits, shift + direction)
+        }))
+      }
+      return
+    }
+
+    // If not mobile, proceed with animation
     if (shift !== null && ((shift === -7 && direction < 0) || (shift === 7 && direction > 0))) return
     if (setOperandState) {
       setOperandState((prevState: OperandState) => ({
@@ -95,7 +135,7 @@ const useBinaryPanel = ({ operandState, setOperandState }: BinaryPanelProps): Up
         }))
       }, UPD_TIMOUT)
     }
-  }, [shift, setOperandState, operandState])
+  }, [shift, setOperandState, operandState, isMobile])
 
   return {
     updateLeftShift: () => { updateShift(-1) },

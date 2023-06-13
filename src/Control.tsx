@@ -2,13 +2,13 @@ import { type FC } from 'react'
 import styled from 'styled-components'
 import { useDrag } from 'react-dnd'
 
-import { OpType, type Op, type Digit, digitsToInt, ShiftDir, renderDirection, type OperandState } from './Common'
-import { evalShift } from './Eval'
+import { OpType, type Op, type Digit, ShiftDir, renderDirection, type OperandState } from './Common'
 
-const StyledControl = styled.div`
-  height: calc(100% / 4.8);
+export const StyledControl = styled.div`
+  height: calc(100% / 6 / 1.3);
   background-color: #f2f2f2;
   border: 1px solid #ddd;
+  border-radius: 15px 0 0 15px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,7 +16,7 @@ const StyledControl = styled.div`
 
   &:hover {
     cursor: pointer;
-    background-color: #e0e0e0;
+    background-color: #e0e0f0;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
   }
@@ -24,34 +24,7 @@ const StyledControl = styled.div`
   @media (max-width: 768px) {
     font-size: 2vw;
     padding: 8px 16px;
-    height: calc(100% / 3);
-  }
-`
-
-const StyledSplitControl = styled.div`
-  padding: 1vw;
-  margin: 1vw;
-  border: 2px dotted #ddd;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: calc(100% / 2);
-  height: calc(100% / 2);
-  transition: all 0.3s ease;
-
-  &:hover {
-    cursor: pointer;
-    border: 2px solid #aaa;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-  }
-
-  @media (max-width: 768px) {
-    font-size: 2vw;
-    padding: 8px 8px;
-    height: calc(100% / 3);
-    margin: 8px 0;
-    border-width: 0px; // Reduce border width on mobile screens
+    height: calc(100% / 4);
   }
 `
 
@@ -95,36 +68,6 @@ export interface ConstControlProps {
   operand: Digit[]
 }
 
-export const ConstControl: FC<ConstControlProps> = function ConstControl ({ name, setOperandState, operand }) {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: OpType.CONST_OPERATION,
-    item: { name, operand },
-    end: (item, monitor) => {
-      const dropResult = monitor.getDropResult<DropResult>()
-      if ((digitsToInt(item.operand) === 1 ||
-          digitsToInt(item.operand) === 0) && dropResult) {
-        console.log('dropped', item.operand)
-        setOperandState((prevState: OperandState) => ({
-          ...prevState,
-          originalBits: item.operand,
-          bits: evalShift(item.operand, prevState.shift)
-        }))
-      }
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-      handlerId: monitor.getHandlerId()
-    })
-  }))
-
-  const opacity = isDragging ? 0.4 : 1
-  return (
-    <StyledSplitControl ref={drag} style={{ opacity }} data-testid={'StyledSplitControl'}>
-      {name}
-    </StyledSplitControl>
-  )
-}
-
 const StyledShiftControl = styled.div`
   display: flex;
   align-items: center;
@@ -145,6 +88,10 @@ const StyledShiftControl = styled.div`
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     transform: scale(1.1);
   }
+
+  @media (max-width: 768px) {
+    font-size: 2vw;
+  }
 `
 
 interface ShiftControlProps {
@@ -157,11 +104,11 @@ export const ShiftControl: FC<ShiftControlProps> = function ShiftControl ({ dire
   return (
     <StyledShiftControl onClick={onClick}>
       {direction === ShiftDir.LEFT && shiftAmount < 0 && (
-        <span style={{ marginRight: '4px', fontSize: '1vw', opacity: 0.6 }}>{Math.abs(shiftAmount)}</span>
+        <span style={{ marginRight: '4px', fontSize: '2vw', opacity: 0.6 }}>{Math.abs(shiftAmount)}</span>
       )}
       {renderDirection(direction)}
       {direction === ShiftDir.RIGHT && shiftAmount > 0 && (
-        <span style={{ marginLeft: '4px', fontSize: '1vw', opacity: 0.6 }}>{shiftAmount}</span>
+        <span style={{ marginLeft: '4px', fontSize: '2vw', opacity: 0.6 }}>{shiftAmount}</span>
       )}
     </StyledShiftControl>
   )
