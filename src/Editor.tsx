@@ -1,7 +1,7 @@
 import { type FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowDown, faChessKnight } from '@fortawesome/free-solid-svg-icons'
+import { faArrowDown, faChessKnight, faQuestion, faCogs, faListUl } from '@fortawesome/free-solid-svg-icons'
 import { DndProvider, useDrop } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import React from 'react'
@@ -13,11 +13,15 @@ import { type Digit, Op, ONE, type OperandState, digitsToInt, intToDigits, isBin
 import { ConstOperand } from './Const'
 import { evalExpr, evalShift } from './Eval'
 import { type Expr, ExprType, evaluate, VALUE_EXPR, BIN_APP_EXPR, BinOperation, NOT_EXPR, SHIFT_EXPR, ShiftDirection, unwindStackToExpr, ZERO_EXPR_VAL, exprEquals } from './Expr'
-import { GameSummaryModal } from './Modal'
+import { useModal } from './Modal'
 import { EvalStack, HighlightedFrameDisplay } from './EvalStack'
-import { LeftSidebar, SimpleControl, ResultArrow, SubmitButton, RightSidebar } from './RandomUI'
+import { LeftSidebar, SimpleControls, ResultArrow, SubmitButton, RightSidebar } from './RandomUI'
 
 import { useMeasure } from './useMeasure'
+import { Help } from './Help'
+import { PuzzleList } from './PuzzleList'
+import { Settings } from './Settings'
+import { GameSummary } from './GameSummary'
 
 const EditorWrapper = styled.div`
   display: flex;
@@ -31,8 +35,8 @@ const StyledEditorContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 11vw;
-  min-height: 100vh;
+  justify-content: center;
+  margin-top: 4vw;
   position: relative;
 
   @media (max-width: 768px) {
@@ -255,18 +259,63 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
 
   const [{ ref: leftSidebarRef }, leftSidebarBounds] = useMeasure()
 
+  const helpModal = useModal()
+  const settingsModal = useModal()
+  const puzzleListModal = useModal()
+  const modalConfigs = {
+    help: {
+      buttons: {
+        close: {
+          label: 'Close',
+          action: helpModal.closeModal
+        }
+      }
+    },
+    settings: {
+      buttons: {
+        close: {
+          label: 'Close',
+          action: settingsModal.closeModal
+        }
+      }
+    },
+    puzzleList: {
+      buttons: {
+        close: {
+          label: 'Close',
+          action: puzzleListModal.closeModal
+        }
+      }
+    }
+  }
+
   return (
         <DndProvider backend={HTML5Backend}>
             {targetReached && (
-                <GameSummaryModal
-                  onRetryClick={resetEditor}
-                  onNewGameClick={onNewGame}
+                <GameSummary
+                  buttons={{
+                    retry: {
+                      label: 'Retry',
+                      action: resetEditor
+                    },
+                    newGame: {
+                      label: 'New Game',
+                      action: onNewGame
+                    }
+                  }}
                   resultExpr={unwindStackToExpr(evaluationFrames)}
                   bitBotExpr={solverSolution || ZERO_EXPR_VAL}
                 />)}
+            {helpModal.isOpen && <Help {...modalConfigs.help} />}
+            {puzzleListModal.isOpen && <PuzzleList {...modalConfigs.puzzleList} />}
+            {settingsModal.isOpen && <Settings {...modalConfigs.settings} />}
             <EditorWrapper>
             <LeftSidebar ref={leftSidebarRef}>
-                <SimpleControl>HELP</SimpleControl>
+                <SimpleControls>
+                  <FontAwesomeIcon onClick={helpModal.openModal} icon={faQuestion} color="grey"/>
+                  <FontAwesomeIcon onClick={puzzleListModal.openModal} icon={faListUl} color="grey"/>
+                  <FontAwesomeIcon onClick={settingsModal.openModal} icon={faCogs} color="grey"/>
+                </SimpleControls>
                 <EvalStack frames={evaluationFrames} onDropLast={dropLastFrame} leftSidebarWidth={leftSidebarBounds.width} />
                 <HighlightedFrameDisplay borderColor={'#2696fc'} backgroundColor={'#badeff'}>
                 <pre>{`${isMobile ? '' : 'Target: '}${targetBits.map(bit => bit.toString()).join('')}`}</pre>
@@ -279,7 +328,7 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
                 <ResultArrow> <FontAwesomeIcon icon={faArrowDown} color="#a8a8a8"/> </ResultArrow>
                 <BinaryPanel hideShift fontColor="#e2e0df" operandState={{ originalBits: outBits, bits: outBits, shift: 0, sliding: Array(8).fill(0) }} />
                 <SubmitButton onClick={submitTransition}>
-                <FontAwesomeIcon icon={faChessKnight} color="white"/>
+                  <FontAwesomeIcon icon={faChessKnight} color="white"/>
                 </SubmitButton>
             </EditorContent>
             <RightSidebar>

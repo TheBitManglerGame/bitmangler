@@ -152,7 +152,7 @@ export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOpera
     const updateScaleFactor: () => void = () => {
       const viewportWidth = window.innerWidth
       const newScaleFactor = viewportWidth / 1920
-      console.log('newScaleFactor', newScaleFactor)
+      // console.log('newScaleFactor', newScaleFactor)
       setScaleFactor(newScaleFactor)
     }
 

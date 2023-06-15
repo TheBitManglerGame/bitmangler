@@ -1,10 +1,6 @@
 import styled, { keyframes } from 'styled-components'
 
 export const SubmitButton = styled.button`
-  position: absolute;
-  bottom: 12vw;
-  left: 50%;
-  transform: translateX(-50%);
   margin: 4vw 0;
   padding: 16px 64px;
   background-color: #007bff;
@@ -14,11 +10,11 @@ export const SubmitButton = styled.button`
   cursor: pointer;
   font-size: 3vw;
   transition: all 0.3s ease;
+  align-self: center;
 
   &:hover {
     background-color: #0069d9;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    transform: translateX(-50%) scale(1.05);
   }
 
   @media (max-width: 768px) {
@@ -37,12 +33,10 @@ export const RightSidebar = styled.div`
   height: 100vh;
 `
 
-export const SimpleControl = styled.div`
-  background-color: #f2f2f2;
+export const SimpleControls = styled.div`
   padding: 2vw;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-between;
 
   &:hover {
     cursor: pointer;

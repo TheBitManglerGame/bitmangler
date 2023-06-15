@@ -1,7 +1,5 @@
 import styled from 'styled-components'
-
-import { type Expr, exprScore, prettyPrint } from './Expr'
-import { Code, CodeContent } from './Code'
+import React, { useState } from 'react'
 
 const ModalContainer = styled.div`
   display: flex;
@@ -56,46 +54,56 @@ const ModalButton = styled.button`
   }
 `
 
-const BitBotImage = styled.img`
-  width: 100%;
-  max-width: 300px;
-  margin: 10px;
+export function useModal (initialState = false): { isOpen: boolean, openModal: () => void, closeModal: () => void } {
+  const [isOpen, setIsOpen] = useState<boolean>(initialState)
 
-  @media (max-width: 768px) {
-    max-width: 200px;
-  }
-`
+  const openModal = (): void => { setIsOpen(true) }
+  const closeModal = (): void => { setIsOpen(false) }
 
-interface ModalProps {
-  onRetryClick: () => void
-  onNewGameClick: () => void
-  resultExpr: Expr
-  bitBotExpr: Expr
+  return { isOpen, openModal, closeModal }
 }
 
-export const GameSummaryModal: React.FC<ModalProps> = ({ onRetryClick, onNewGameClick, resultExpr, bitBotExpr }) => {
+interface ButtonAction {
+  label: string
+  action: () => void
+}
+
+export interface ModalButtonsProps {
+  buttons?: Record<string, ButtonAction>
+}
+
+interface ModalProps extends ModalButtonsProps {
+  children?: React.ReactNode
+}
+
+const Modal: React.FC<ModalProps> = ({ children, buttons }) => {
   return (
     <StyledModal>
       <ModalContainer>
         <ModalContent>
-          <h2>Congratulations! You have reached the target!</h2>
-          <p>Final solution:</p>
-          <Code>
-            <CodeContent>{prettyPrint(resultExpr)}</CodeContent>
-          </Code>
-          <p>Score: {exprScore(resultExpr)} </p>
-          <BitBotImage src="/mrbitbot.png" alt="mrbitbot" />
-          <p>Mr. Bitbot provided this solution:</p>
-          <Code>
-            <CodeContent>{prettyPrint(bitBotExpr)}</CodeContent>
-          </Code>
-          <p>Mr. Bitbot Score: {exprScore(bitBotExpr)} </p>
-          <div>
-              <ModalButton onClick={onRetryClick}>Retry</ModalButton>
-              <ModalButton onClick={onNewGameClick}>New game</ModalButton>
-          </div>
+          {children}
+          {buttons && (
+            <div>
+              {Object.keys(buttons).map((key) => (
+                <ModalButton key={key} onClick={buttons[key].action}>
+                  {buttons[key].label}
+                </ModalButton>
+              ))}
+            </div>
+          )}
         </ModalContent>
       </ModalContainer>
     </StyledModal>
   )
+}
+// A higher order component that takes a component to render inside the Modal.
+// The return type is a new component that takes the props for the given component.
+export function withModal<T> (Component: React.ComponentType<T>): React.FC<T & { buttons?: Record<string, ButtonAction>, children?: React.ReactNode }> {
+  return function WrappedComponent (props: T & { buttons?: Record<string, ButtonAction>, children?: React.ReactNode }) {
+    return (
+      <Modal {...props}>
+        <Component {...props} />
+      </Modal>
+    )
+  }
 }
