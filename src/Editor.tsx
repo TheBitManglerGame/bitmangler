@@ -326,7 +326,10 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
                 <Operation op={binOp} canDrop={false} />
                 { binOpActive && <ConstOperand operandState={constOperandState} setOperandState={setConstOperandState} /> }
                 <ResultArrow> <FontAwesomeIcon icon={faArrowDown} color="#a8a8a8"/> </ResultArrow>
-                <BinaryPanel hideShift fontColor="#e2e0df" operandState={{ originalBits: outBits, bits: outBits, shift: 0, sliding: Array(8).fill(0) }} />
+                <BinaryPanel hideShift
+                             targetBits={targetBits}
+                             fontColor="#e2e0df"
+                             operandState={{ originalBits: outBits, bits: outBits, shift: 0, sliding: Array(8).fill(0) }} />
                 <SubmitButton onClick={submitTransition}>
                   <FontAwesomeIcon icon={faChessKnight} color="white"/>
                 </SubmitButton>

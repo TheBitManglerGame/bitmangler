@@ -1,7 +1,9 @@
 import React, { type ReactNode, createContext, useContext, useState } from 'react'
 
-interface AppState {
+export interface AppState {
   env: 'dev' | 'prod'
+  // Editor settings
+  bitHighlightAssistant: boolean
 }
 
 interface AppStateCtx {
@@ -11,7 +13,9 @@ interface AppStateCtx {
 
 function appStateDefault (): AppState {
   return {
-    env: 'dev'
+    env: 'dev',
+    // Editor settings
+    bitHighlightAssistant: true
   }
 }
 
