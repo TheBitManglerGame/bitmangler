@@ -1,14 +1,24 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDrop } from 'react-dnd'
 import styled from 'styled-components'
-import { type OperandState, OpType, ShiftDir, canDropStyles } from './Common'
+import { type OperandState, OpType, ShiftDir, canDropStyles, type Digit } from './Common'
 import { ShiftControl } from './Control'
 import { evalShift } from './Eval'
+import { useAppState } from './AppState'
 
 const UPD_TIMOUT = 200
 const MOBILE_VIEWPORT_WIDTH = 768
 
-const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string, sliding: number, scaleFactor: number, fadeOut: boolean }>`
+interface StyledBinaryDigitProps {
+  canDrop: boolean
+  fontColor: string
+  sliding: number
+  scaleFactor: number
+  fadeOut: boolean
+  isWrong?: boolean
+}
+
+const StyledBinaryDigit = styled.div<StyledBinaryDigitProps>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -21,6 +31,11 @@ const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string, slid
   opacity: ${props => (props.fadeOut && props.sliding !== 0 ? 0 : 1)};
   transform: ${props => `translate3d(${props.sliding * 125 * props.scaleFactor}px, 0, 0)`};
   color: ${props => props.canDrop ? 'rgba(0, 0, 0, 0.3)' : props.fontColor};
+  width: 4vw;
+  box-sizing: border-box;
+  border: ${props => props.isWrong ? '1px solid #fcd2d2' : 'none'};
+  background-color: ${props => props.isWrong ? 'rgba(247, 208, 208, 0.5)' : 'transparent'};
+  animation: ${props => props.isWrong ? 'flicker 2s linear infinite' : 'none'};
 
   &:hover {
     cursor: pointer;
@@ -32,6 +47,11 @@ const StyledBinaryDigit = styled.div<{ canDrop: boolean, fontColor: string, slid
   }
 
   ${props => canDropStyles(props.canDrop)}
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
 `
 
 export const StyledBinaryPanel = styled.div<{ fontColor: string }>`
@@ -78,6 +98,7 @@ interface BinaryPanelProps {
   setOperandState?: React.Dispatch<React.SetStateAction<OperandState>>
   isConst?: boolean
   hideShift?: boolean
+  targetBits?: Digit[]
 }
 
 interface UpdateShiftActions {
@@ -143,16 +164,16 @@ const useBinaryPanel = ({ operandState, setOperandState }: BinaryPanelProps): Up
   }
 }
 
-export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOperandState, fontColor, hideShift = false, isConst = false }) => {
+export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOperandState, fontColor, hideShift = false, isConst = false, targetBits }) => {
   const { bits } = operandState
   const { updateLeftShift, updateRightShift } = useBinaryPanel({ operandState, setOperandState })
   const [scaleFactor, setScaleFactor] = useState(1)
+  const { appState } = useAppState()
 
   useEffect(() => {
     const updateScaleFactor: () => void = () => {
       const viewportWidth = window.innerWidth
       const newScaleFactor = viewportWidth / 1920
-      // console.log('newScaleFactor', newScaleFactor)
       setScaleFactor(newScaleFactor)
     }
 
@@ -176,28 +197,31 @@ export const BinaryPanel: React.FC<BinaryPanelProps> = ({ operandState, setOpera
 
   return (
     <StyledBinaryPanel ref={isConst ? drop : null} fontColor={fontColor || 'black'}>
-        {operandState.shift !== null && !hideShift &&
-          <LeftWrapper>
-            <ShiftControl direction={ShiftDir.LEFT} shiftAmount={operandState.shift} onClick={updateLeftShift} />
-          </LeftWrapper>}
-        <BitsContainer>
-        {bits.map((bit, index) => (
-          <StyledBinaryDigit
-            key={index}
-            canDrop={isConst ? canDrop : false}
-            fontColor={fontColor || 'black'}
-            sliding={operandState.sliding[index]}
-            scaleFactor={scaleFactor}
-            fadeOut={(index === 0 && operandState.sliding[index] === -1) || (index === bits.length - 1 && operandState.sliding[index] === 1)}
-          >
-            {bit}
-          </StyledBinaryDigit>
-        ))}
-        </BitsContainer>
-        {operandState.shift !== null && !hideShift &&
-        <RightWrapper>
-            <ShiftControl direction={ShiftDir.RIGHT} shiftAmount={operandState.shift} onClick={updateRightShift} />
-        </RightWrapper>}
+      {operandState.shift !== null && !hideShift &&
+        <LeftWrapper>
+          <ShiftControl direction={ShiftDir.LEFT} shiftAmount={operandState.shift} onClick={updateLeftShift} />
+        </LeftWrapper>}
+      <BitsContainer>
+        {bits.map((bit, index) => {
+          const isWrong = targetBits && bit !== targetBits[index]
+          return (
+            <StyledBinaryDigit
+              key={index}
+              canDrop={isConst ? canDrop : false}
+              fontColor={fontColor || 'black'}
+              sliding={operandState.sliding[index]}
+              scaleFactor={scaleFactor}
+              fadeOut={(index === 0 && operandState.sliding[index] === -1) || (index === bits.length - 1 && operandState.sliding[index] === 1)}
+              isWrong={appState.bitHighlightAssistant && isWrong}>
+              {bit}
+            </StyledBinaryDigit>
+          )
+        })}
+      </BitsContainer>
+      {operandState.shift !== null && !hideShift &&
+      <RightWrapper>
+        <ShiftControl direction={ShiftDir.RIGHT} shiftAmount={operandState.shift} onClick={updateRightShift} />
+      </RightWrapper>}
     </StyledBinaryPanel>
   )
 }

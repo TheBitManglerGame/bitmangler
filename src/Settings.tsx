@@ -1,7 +1,32 @@
-import React from 'react'
+import React, { useCallback } from 'react'
+import styled from 'styled-components'
+import Switch from 'react-switch'
 
-import { type ModalButtonsProps, withModal } from './Modal'
+import { withModal, type ModalButtonsProps } from './Modal'
 import { useAppState } from './AppState'
+
+interface SettingsProps extends ModalButtonsProps {}
+
+const SettingsWrapper = styled.div`
+  width: 90%;
+  margin: auto;
+  padding: 20px;
+  margin-bottom: 1vw;
+`
+
+const SwitchWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+`
+
+const Label = styled.label`
+  font-size: 1em;
+  margin-right: 10px;
+`
 
 interface SettingsProps extends ModalButtonsProps {
 }
@@ -9,18 +34,21 @@ interface SettingsProps extends ModalButtonsProps {
 const SettingsModal: React.FC<SettingsProps> = () => {
   const { appState, setAppState } = useAppState()
 
-  const handleToggleEnv = (): void => {
-    const newEnv = appState.env === 'dev' ? 'prod' : 'dev'
-    setAppState({ ...appState, env: newEnv })
-    console.log('appState:', appState)
-  }
+  const handleSwitchChange = useCallback((checked: boolean) => {
+    setAppState({ ...appState, bitHighlightAssistant: checked })
+  }, [])
 
   return (
-    <div>
+    <SettingsWrapper>
       <h1>Settings</h1>
-      <p>This is Editor settings page</p>
-      <button onClick={handleToggleEnv}>Toggle Environment</button>
-    </div>
+      <SwitchWrapper>
+        <Label>Bit Highlight Assistant:</Label>
+        <Switch
+          checked={appState.bitHighlightAssistant}
+          onChange={handleSwitchChange}
+        />
+      </SwitchWrapper>
+    </SettingsWrapper>
   )
 }
 
