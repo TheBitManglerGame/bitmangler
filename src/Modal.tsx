@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const ModalContainer = styled.div`
   display: flex;
@@ -80,6 +80,23 @@ interface ModalProps extends ModalButtonsProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ children, buttons, width }) => {
+  const closeModal = buttons?.close?.action || null
+  const escClose = Boolean(closeModal)
+
+  // Effect for handling the Escape key
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape' && escClose && closeModal) {
+        closeModal()
+      }
+    }
+    window.addEventListener('keydown', handleEsc)
+
+    // Clean up function
+    return () => {
+      window.removeEventListener('keydown', handleEsc)
+    }
+  }, [escClose])
   return (
     <StyledModal>
       <ModalContainer>
