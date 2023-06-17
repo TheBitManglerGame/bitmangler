@@ -105,6 +105,10 @@ export function print8LSB (input: number): string {
   return input.toString(2).slice(-8).padStart(8, '0')
 }
 
+export function puzzleKey (d1: Digit[], d2: Digit[]): string {
+  return print8LSB(digitsToInt(d1)).concat(print8LSB(digitsToInt(d2)))
+}
+
 export const ONE: Digit[] = intToDigits(1)
 export const ZERO: Digit[] = intToDigits(0)
 

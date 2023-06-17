@@ -1,9 +1,16 @@
-import React, { type ReactNode, createContext, useContext, useState } from 'react'
+import { type ReactNode, createContext, useContext, useState } from 'react'
+import { type Database } from './Puzzle'
+import { loadDatabase } from './Loader'
+import { newSessioninfo, type SessionInfo } from './SessionInfo'
 
 export interface AppState {
   env: 'dev' | 'prod'
   // Editor settings
   bitHighlightAssistant: boolean
+  // Database
+  db: Database
+  // Current session
+  session: SessionInfo
 }
 
 interface AppStateCtx {
@@ -15,7 +22,11 @@ function appStateDefault (): AppState {
   return {
     env: 'dev',
     // Editor settings
-    bitHighlightAssistant: true
+    bitHighlightAssistant: true,
+    // Load database (TODO: cache it in local storage)
+    db: loadDatabase(),
+    // Initialize session
+    session: newSessioninfo()
   }
 }
 

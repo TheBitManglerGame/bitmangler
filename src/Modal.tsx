@@ -1,13 +1,11 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import React, { useState } from 'react'
 
 const ModalContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  overflow: auto;
-  padding: 1rem;
+  height: 70%;
 `
 const StyledModal = styled.div`
   position: fixed;
@@ -20,18 +18,20 @@ const StyledModal = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  overflow: auto;
 `
 
-const ModalContent = styled.div`
+const ModalContent = styled.div<{ width?: string | number }>`
   background-color: #fdfdfd;
   padding: 2rem;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 90%;
   margin: 1rem;
+
+  ${props => props.width && css`
+    width: ${typeof props.width === 'number' ? `${props.width}px` : props.width};
+  `}
 
   @media (max-width: 768px) {
     font-size: 0.8rem;
@@ -74,13 +74,14 @@ export interface ModalButtonsProps {
 
 interface ModalProps extends ModalButtonsProps {
   children?: React.ReactNode
+  width?: string | number
 }
 
-const Modal: React.FC<ModalProps> = ({ children, buttons }) => {
+const Modal: React.FC<ModalProps> = ({ children, buttons, width }) => {
   return (
     <StyledModal>
       <ModalContainer>
-        <ModalContent>
+        <ModalContent width={width}>
           {children}
           {buttons && (
             <div>
@@ -96,10 +97,11 @@ const Modal: React.FC<ModalProps> = ({ children, buttons }) => {
     </StyledModal>
   )
 }
+
 // A higher order component that takes a component to render inside the Modal.
 // The return type is a new component that takes the props for the given component.
-export function withModal<T> (Component: React.ComponentType<T>): React.FC<T & { buttons?: Record<string, ButtonAction>, children?: React.ReactNode }> {
-  return function WrappedComponent (props: T & { buttons?: Record<string, ButtonAction>, children?: React.ReactNode }) {
+export function withModal<T> (Component: React.ComponentType<T>): React.FC<T & { buttons?: Record<string, ButtonAction>, children?: React.ReactNode, width?: string | number }> {
+  return function WrappedComponent (props: T & { buttons?: Record<string, ButtonAction>, children?: React.ReactNode, width?: string | number }) {
     return (
       <Modal {...props}>
         <Component {...props} />
