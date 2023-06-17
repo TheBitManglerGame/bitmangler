@@ -15,7 +15,7 @@ import { evalExpr, evalShift } from './Eval'
 import { type Expr, ExprType, evaluate, VALUE_EXPR, BIN_APP_EXPR, BinOperation, NOT_EXPR, SHIFT_EXPR, ShiftDirection, unwindStackToExpr, ZERO_EXPR_VAL, exprEquals } from './Expr'
 import { useModal } from './Modal'
 import { EvalStack, HighlightedFrameDisplay } from './EvalStack'
-import { LeftSidebar, SimpleControls, ResultArrow, SubmitButton, RightSidebar } from './RandomUI'
+import { LeftSidebar, SimpleControls, ResultArrow, SubmitButton, RightSidebar, StyledIcon } from './RandomUI'
 
 import { useMeasure } from './useMeasure'
 import { Help } from './Help'
@@ -326,9 +326,9 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
             <EditorWrapper>
             <LeftSidebar ref={leftSidebarRef}>
                 <SimpleControls>
-                  <FontAwesomeIcon onClick={helpModal.openModal} icon={faQuestion} color="grey"/>
-                  <FontAwesomeIcon onClick={puzzleListModal.openModal} icon={faListUl} color="grey"/>
-                  <FontAwesomeIcon onClick={settingsModal.openModal} icon={faCogs} color="grey"/>
+                  <StyledIcon onClick={helpModal.openModal} icon={faQuestion} color="grey"/>
+                  <StyledIcon onClick={puzzleListModal.openModal} icon={faListUl} color="grey"/>
+                  <StyledIcon onClick={settingsModal.openModal} icon={faCogs} color="grey"/>
                 </SimpleControls>
                 <EvalStack frames={evaluationFrames} onDropLast={dropLastFrame} leftSidebarWidth={leftSidebarBounds.width} />
                 <HighlightedFrameDisplay borderColor={'#2696fc'} backgroundColor={'#badeff'}>

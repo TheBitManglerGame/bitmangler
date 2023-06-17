@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styled, { keyframes } from 'styled-components'
 
 export const SubmitButton = styled.button`
@@ -85,5 +86,12 @@ export const LeftSidebar = styled.div`
 
   @media (max-width: 768px) {
     width: 20%;
+  }
+`
+
+export const StyledIcon = styled(FontAwesomeIcon)`
+  padding: 10px;  // You can adjust this value to meet your needs
+  &:hover {
+    cursor: pointer;
   }
 `
