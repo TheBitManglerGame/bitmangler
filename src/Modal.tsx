@@ -22,7 +22,9 @@ const StyledModal = styled.div`
 
 const ModalContent = styled.div<{ width?: string | number }>`
   background-color: #fdfdfd;
-  padding: 2rem;
+  padding: 2.5vw;
+  overflow: auto;
+  max-height: 75vh;
   border-radius: 5px;
   display: flex;
   flex-direction: column;

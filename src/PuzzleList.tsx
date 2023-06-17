@@ -15,9 +15,6 @@ const StyledPuzzleList = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
-  overflow: auto;
-  margin-bottom: 1vw;
-  height: inherit;
 `
 
 const PuzzleProgressContainer = styled.div`
