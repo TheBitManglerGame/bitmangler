@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { type ModalButtonsProps, withModal } from './Modal'
 import { useAppState } from './AppState'
 import { type Category, type Puzzle } from './Puzzle'
-import { digitsToInt, puzzleKey } from './Common'
+import { areArraysEqual, digitsToInt, puzzleKey } from './Common'
 
 interface PuzzleListProps extends ModalButtonsProps {}
 
@@ -16,49 +16,61 @@ const StyledPuzzleList = styled.div`
   justify-content: center;
   align-items: stretch;
   overflow: auto;
-  margin-bottom: 2vw;
+  margin-bottom: 1vw;
   height: inherit;
 `
 
-const StyledPuzzleRow = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
-  position: relative;
-  cursor: pointer;
-  border-radius: 5px;
-  padding: 3px;
-
-  &:hover {
-    background-color: #f0f0f0;
-  }
-`
-
 const PuzzleProgressContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-right: 10px;
+display: flex;
+align-items: center;
+margin-right: 10px;
 `
 
 const PuzzleProgressMarker = styled.div<{ completed: boolean }>`
+  margin-left: 5px;
   position: relative;
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: ${({ completed }) => (completed ? '#transparent' : '#transparent')};
-  border: 3px solid ${({ completed }) => (completed ? '#00cc00' : '#D3D3D3')};
+  background-color: white;
+  border: 2px solid ${({ completed }) => (completed ? '#00cc00' : '#D3D3D3')};
   transition: 0.4s ease;
 
   ::after {
-    content: ${({ completed }) => (completed ? "'✔'" : "''")};
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 14px;
-    color: ${({ completed }) => (completed ? '#00cc00' : '#D3D3D3')};
-  }
-`
+      content: ${({ completed }) => (completed ? "'✔'" : "''")};
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 14px;
+      color: ${({ completed }) => (completed ? '#00cc00' : '#D3D3D3')};
+    }
+    `
+
+const StyledCatHeading = styled.h4`
+  padding-left: 15px;
+  `
+
+const StyledCatContainer = styled.div`
+  border: 1px solid #f0f0f0;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  `
+
+const StyledPuzzleRow = styled.div<{ active?: boolean }>`
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: ${({ active }) => (!active ? 'pointer' : 'default')};
+    border-radius: 5px;
+    padding: 10px;
+    border-top: ${({ active }) => (active ? '1px solid #e6e6e6' : 'none')};
+    background-color: ${({ active }) => (active ? '#f0f0f0' : 'none')};
+
+    &:hover {
+      background-color: ${({ active }) => (!active ? '#f0f0f0' : 'none')};
+    }
+  `
 
 const PuzzleListModal: React.FC<PuzzleListProps> = () => {
   const { appState } = useAppState()
@@ -84,20 +96,22 @@ const PuzzleListModal: React.FC<PuzzleListProps> = () => {
     return appState.session.solvedPuzzles.has(key)
   }
 
-  const renderPuzzle = (puzzle: Puzzle): ReactElement => (
-    <StyledPuzzleRow key={`${digitsToInt(puzzle.bits)}${digitsToInt(puzzle.targetBits)}`} onClick={() => { startPuzzle(puzzle) }}>
+  const renderPuzzle = (puzzle: Puzzle): ReactElement => {
+    const isActive = areArraysEqual(appState.session.bits, puzzle.bits) && areArraysEqual(appState.session.targetBits, puzzle.targetBits)
+    return (
+    <StyledPuzzleRow key={`${digitsToInt(puzzle.bits)}${digitsToInt(puzzle.targetBits)}`} onClick={() => { !isActive && startPuzzle(puzzle) }} active={isActive}>
       <PuzzleProgressContainer>
         <PuzzleProgressMarker completed={isSolved(puzzle)} />
       </PuzzleProgressContainer>
-      {puzzle.displayName} - {puzzle.pointsThresh} points
-    </StyledPuzzleRow>
-  )
+      {puzzle.displayName} - {puzzle.comments}
+    </StyledPuzzleRow>)
+  }
 
   const renderCategory = (category: Category, puzzles: Puzzle[]): ReactElement => (
-    <div key={category}>
-      <h4>{appState.db.categories[category]}</h4>
+    <StyledCatContainer key={category}>
+      <StyledCatHeading>{appState.db.categories[category]}</StyledCatHeading>
       {puzzles.map(renderPuzzle)}
-    </div>
+    </StyledCatContainer>
   )
 
   const puzzlesByCategory: Record<Category, Puzzle[]> = appState.db.puzzles.reduce<Record<Category, Puzzle[]>>((acc, puzzle) => {

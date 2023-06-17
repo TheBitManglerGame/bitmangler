@@ -74,7 +74,7 @@ function generateRandomArray (): Digit[] {
   return Array.from({ length: 8 }, () => (Math.random() > 0.5 ? 1 : 0) as Digit)
 }
 
-function areArraysEqual (a: Digit[], b: Digit[]): boolean {
+export function areArraysEqual (a: Digit[], b: Digit[]): boolean {
   return a.length === b.length && a.every((value, index) => value === b[index])
 }
 

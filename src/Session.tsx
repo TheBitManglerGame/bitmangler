@@ -5,6 +5,7 @@ import Editor from './Editor'
 import { type Digit, digitsFromUrlParam, genRandomTargetDest, type Op, parseAllowedOpFromString, ALL_ALLOWED_OPS } from './Common'
 import { solve } from './Solver'
 import { type Expr } from './Expr'
+import { useAppState } from './AppState'
 
 interface BitQueryParams {
   bits: Digit[] | null
@@ -41,6 +42,7 @@ function getBitQueryParams (): BitQueryParams {
 const PuzzleSession: FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const { appState } = useAppState()
 
   // Use a useEffect hook to respond to changes in the URL parameters.
   useEffect(() => {
@@ -73,6 +75,10 @@ const PuzzleSession: FC = () => {
     setSolution(solve(bits, targetBits))
     setGameKey(gameKey + 1)
   }
+
+  // update session state
+  appState.session.bits = bits
+  appState.session.targetBits = targetBits
 
   return (<Editor key={gameKey} bits={bits} targetBits={targetBits} allowedOps={allowedOpsURLParam} solverSolution={solution} onNewGame={onNewGame}/>)
 }
