@@ -1,0 +1,128 @@
+{
+    "puzzles": [
+        {
+            "puzzleId": 0,
+            "displayName": "Intro Puzzle 1",
+            "bits": "00110100",
+            "targetBits": "10110101",
+            "comments": "Welcome to the Binary Basics. Your first task is simple, no manipulation required!",
+            "hints": [
+                "You don't have to do anything!"
+            ],
+            "category": "INTRO",
+            "pointsThresh": 1
+        },
+        {
+            "puzzleId": 1,
+            "displayName": "Puzzle 1",
+            "bits": "10101010",
+            "targetBits": "01010101",
+            "comments": "Try flipping the bits!",
+            "hints": [
+                "Look at the pattern",
+                "Every second bit is flipped",
+                "NOT operator flips the bits"
+            ],
+            "category": "NOT",
+            "pointsThresh": 1
+        },
+        {
+            "puzzleId": 2,
+            "displayName": "Puzzle 2",
+            "bits": "11110000",
+            "targetBits": "00001111",
+            "comments": "Try flipping the bits!",
+            "hints": [
+                "Look at the pattern",
+                "Every second bit is flipped",
+                "NOT operator flips the bits"
+            ],
+            "category": "NOT",
+            "pointsThresh": 99
+        },
+        {
+            "puzzleId": 2,
+            "displayName": "Puzzle 3",
+            "bits": "00000001",
+            "targetBits": "11111110",
+            "comments": "Try flipping the bits!",
+            "hints": [
+                "Look at the pattern",
+                "Every second bit is flipped",
+                "NOT operator flips the bits"
+            ],
+            "category": "NOT",
+            "pointsThresh": 99
+        },
+        {
+            "puzzleId": 3,
+            "displayName": "Puzzle 1",
+            "bits": "11001100",
+            "targetBits": "11000000",
+            "comments": "Get the last 2 bits to zero, keeping the rest the same.",
+            "hints": [
+                "AND operator can be used to make specific bits zero."
+            ],
+            "category": "AND",
+            "pointsThresh": 99
+        },
+        {
+            "puzzleId": 4,
+            "displayName": "Puzzle 1",
+            "bits": "01111110",
+            "targetBits": "11111111",
+            "comments": "Can you get the first and last bits to be 1?",
+            "hints": [
+                "OR operator can be used to make specific bits one."
+            ],
+            "category": "OR",
+            "pointsThresh": 99
+        },
+        {
+            "puzzleId": 5,
+            "displayName": "Puzzle 1",
+            "bits": "11100111",
+            "targetBits": "11111111",
+            "comments": "Flip the middle bits without affecting others.",
+            "hints": [
+                "XOR operator can be used to flip specific bits."
+            ],
+            "category": "XOR",
+            "pointsThresh": 5
+        },
+        {
+            "puzzleId": 6,
+            "displayName": "Puzzle 1",
+            "bits": "10101000",
+            "targetBits": "01010100",
+            "comments": "Shift everything one bit to the right.",
+            "hints": [
+                "SHIFT operator can be used to shift bits."
+            ],
+            "category": "SHIFT",
+            "pointsThresh": 6
+        },
+        {
+            "puzzleId": 7,
+            "displayName": "Puzzle 1",
+            "bits": "10010010",
+            "targetBits": "10100101",
+            "comments": "Challenge: Flip the second bit and shift all bits to the right.",
+            "hints": [
+                "Combining operators can achieve complex changes."
+            ],
+            "category": "TECHNIQUES",
+            "pointsThresh": 7
+        }
+    ],
+    "categories": {
+        "INTRO": "Binary Basics 101",
+        "NOT": "Flippin' Not!",
+        "AND": "Hand in Hand with AND",
+        "OR": "To Be OR Not To Be",
+        "XOR": "In XOR We Trust",
+        "SHIFT": "The Paradigm SHIFT",
+        "RANDOM": "Random Riddles",
+        "TECHNIQUES": "Mastering Manipulation"
+    }
+}

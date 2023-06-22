@@ -9,19 +9,20 @@ import React from 'react'
 import { BinaryPanel } from './BinaryPanel'
 import { Operation } from './Operation'
 import { Control, StyledControl } from './Control'
-import { type Digit, Op, ONE, type OperandState, digitsToInt, intToDigits, isBinOp, OpType } from './Common'
+import { type Digit, Op, ONE, type OperandState, digitsToInt, intToDigits, isBinOp, OpType, puzzleKey } from './Common'
 import { ConstOperand } from './Const'
 import { evalExpr, evalShift } from './Eval'
 import { type Expr, ExprType, evaluate, VALUE_EXPR, BIN_APP_EXPR, BinOperation, NOT_EXPR, SHIFT_EXPR, ShiftDirection, unwindStackToExpr, ZERO_EXPR_VAL, exprEquals } from './Expr'
 import { useModal } from './Modal'
 import { EvalStack, HighlightedFrameDisplay } from './EvalStack'
-import { LeftSidebar, SimpleControls, ResultArrow, SubmitButton, RightSidebar } from './RandomUI'
+import { LeftSidebar, SimpleControls, ResultArrow, SubmitButton, RightSidebar, StyledIcon } from './RandomUI'
 
 import { useMeasure } from './useMeasure'
 import { Help } from './Help'
 import { PuzzleList } from './PuzzleList'
 import { Settings } from './Settings'
 import { GameSummary } from './GameSummary'
+import { useAppState } from './AppState'
 
 const EditorWrapper = styled.div`
   display: flex;
@@ -174,6 +175,7 @@ export function ExprToUIstate (expr: Expr): { op: Op, operand1: OperandState, op
 }
 
 export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNewGame, allowedOps }) => {
+  const { appState, setAppState } = useAppState()
   const [inBitsState, setInBitsState] = useState<OperandState>({ originalBits: bits, bits, shift: 0, sliding: Array(8).fill(0) })
   const [constOperandState, setConstOperandState] = useState<OperandState>({ originalBits: ONE, bits: ONE, shift: 0, sliding: Array(8).fill(0) })
   const [binOp, setbinOp] = useState(Op.NOOP)
@@ -218,6 +220,10 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
       return [...prevFrames, expr]
     })
     if (evaluate(expr) === digitsToInt(targetBits)) {
+      // udpate set of solved puzzles
+      const newSet = new Set(appState.session.solvedPuzzles)
+      newSet.add(puzzleKey(bits, targetBits))
+      setAppState({ ...appState, session: { ...appState.session, solvedPuzzles: newSet } })
       setTargetReached(true)
     } else {
       setInBitsState({ originalBits: outBits, bits: outBits, shift: 0, sliding: Array(8).fill(0) })
@@ -285,7 +291,8 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
           label: 'Close',
           action: puzzleListModal.closeModal
         }
-      }
+      },
+      width: '50vw'
     }
   }
 
@@ -301,6 +308,13 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
                     newGame: {
                       label: 'New Game',
                       action: onNewGame
+                    },
+                    openList: {
+                      label: 'Puzzle list',
+                      action: () => {
+                        setTargetReached(false)
+                        puzzleListModal.openModal()
+                      }
                     }
                   }}
                   resultExpr={unwindStackToExpr(evaluationFrames)}
@@ -312,9 +326,9 @@ export const Editor: FC<EditorProps> = ({ bits, targetBits, solverSolution, onNe
             <EditorWrapper>
             <LeftSidebar ref={leftSidebarRef}>
                 <SimpleControls>
-                  <FontAwesomeIcon onClick={helpModal.openModal} icon={faQuestion} color="grey"/>
-                  <FontAwesomeIcon onClick={puzzleListModal.openModal} icon={faListUl} color="grey"/>
-                  <FontAwesomeIcon onClick={settingsModal.openModal} icon={faCogs} color="grey"/>
+                  <StyledIcon onClick={helpModal.openModal} icon={faQuestion} color="grey"/>
+                  <StyledIcon onClick={puzzleListModal.openModal} icon={faListUl} color="grey"/>
+                  <StyledIcon onClick={settingsModal.openModal} icon={faCogs} color="grey"/>
                 </SimpleControls>
                 <EvalStack frames={evaluationFrames} onDropLast={dropLastFrame} leftSidebarWidth={leftSidebarBounds.width} />
                 <HighlightedFrameDisplay borderColor={'#2696fc'} backgroundColor={'#badeff'}>

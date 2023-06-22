@@ -74,7 +74,7 @@ function generateRandomArray (): Digit[] {
   return Array.from({ length: 8 }, () => (Math.random() > 0.5 ? 1 : 0) as Digit)
 }
 
-function areArraysEqual (a: Digit[], b: Digit[]): boolean {
+export function areArraysEqual (a: Digit[], b: Digit[]): boolean {
   return a.length === b.length && a.every((value, index) => value === b[index])
 }
 
@@ -103,6 +103,10 @@ export function digitsFromUrlParam (paramValue: string | null): Digit[] | null {
 
 export function print8LSB (input: number): string {
   return input.toString(2).slice(-8).padStart(8, '0')
+}
+
+export function puzzleKey (d1: Digit[], d2: Digit[]): string {
+  return print8LSB(digitsToInt(d1)).concat(print8LSB(digitsToInt(d2)))
 }
 
 export const ONE: Digit[] = intToDigits(1)

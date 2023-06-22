@@ -1,10 +1,11 @@
-import { type FC, useState } from 'react'
+import { type FC, useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import Editor from './Editor'
 import { type Digit, digitsFromUrlParam, genRandomTargetDest, type Op, parseAllowedOpFromString, ALL_ALLOWED_OPS } from './Common'
 import { solve } from './Solver'
-import { useNavigate } from 'react-router-dom'
 import { type Expr } from './Expr'
+import { useAppState } from './AppState'
 
 interface BitQueryParams {
   bits: Digit[] | null
@@ -40,6 +41,21 @@ function getBitQueryParams (): BitQueryParams {
 
 const PuzzleSession: FC = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const { appState } = useAppState()
+
+  // Use a useEffect hook to respond to changes in the URL parameters.
+  useEffect(() => {
+    const { bits: bitsFromUrlParam, targetBits: targetBitsFromUrlParam } = getBitQueryParams()
+
+    // Only update state if the URL parameters are not null.
+    if (bitsFromUrlParam && targetBitsFromUrlParam) {
+      setBits(bitsFromUrlParam)
+      setTargetBits(targetBitsFromUrlParam)
+      setSolution(solve(bitsFromUrlParam, targetBitsFromUrlParam))
+      setGameKey(gameKey + 1) // Increment gameKey to trigger a re-render.
+    }
+  }, [location.search]) // The useEffect hook will run again if the search part of the location (i.e., the URL parameters) changes.
 
   const [bitsGen, targetBitsGen] = genRandomTargetDest()
   const { bits: bitsFromUrlParam, targetBits: targetBitsFromUrlParam, allowedOps: allowedOpsURLParam } = getBitQueryParams()
@@ -59,6 +75,10 @@ const PuzzleSession: FC = () => {
     setSolution(solve(bits, targetBits))
     setGameKey(gameKey + 1)
   }
+
+  // update session state
+  appState.session.bits = bits
+  appState.session.targetBits = targetBits
 
   return (<Editor key={gameKey} bits={bits} targetBits={targetBits} allowedOps={allowedOpsURLParam} solverSolution={solution} onNewGame={onNewGame}/>)
 }
