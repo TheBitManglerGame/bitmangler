@@ -9,7 +9,7 @@ In the project directory, you can run:
 ### `npm start`
 
 Runs the app in the development mode.\
-Open [http://localhost:3000/editor](http://localhost:3000/editor) to view app in the browser.
+Open [http://localhost:3000/editor](http://localhost:3000/puzzle) to view app in the browser.
 
 
 ### `npm test`
